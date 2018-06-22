@@ -10,7 +10,10 @@ require_once 'ao.civix.php';
 function ao_civicrm_config(&$config) {
   CRM_Core_Resources::singleton()->addScript(
     "CRM.$(function($) {
-      $('toolbar-item-administration-tray').removeClass('is-active');
+      $('#toolbar-administration').hide();
+      $('.crm-hidemenu').on('click', function() {
+        $('#toolbar-administration').show();
+      });
     });"
   );
   _ao_civix_civicrm_config($config);
