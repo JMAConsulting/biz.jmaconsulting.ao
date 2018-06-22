@@ -1,4 +1,10 @@
 <?php
+define('LANG_SPOKEN', 'custom_10');
+define('LANG_OTHER', 'custom_22');
+define('C_FIRST_NAME', 'custom_17');
+define('C_LAST_NAME', 'custom_18');
+define('C_DOB', 'custom_20');
+define('C_GENDER', 'custom_21');
 
 require_once 'ao.civix.php';
 
@@ -80,6 +86,40 @@ function ao_civicrm_buildForm($formName, &$form) {
         }
       });"
     );
+  }
+  if ($formName == 'CRM_Event_Form_Registration_Register') {
+    if (array_key_exists(LANG_SPOKEN, $form->_fields) && array_key_exists(LANG_OTHER, $form->_fields)) {
+      $form->assign('lang_spoken', LANG_SPOKEN);
+      $form->assign('lang_other', LANG_OTHER);
+    }
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => 'CRM/Ao/Ao.tpl',
+    ));
+  }
+}
+
+function ao_civicrm_postProcess($formName, &$form) {
+  if ($formName == 'CRM_Event_Form_Registration_Confirm') {
+    $params = $form->getVar('_params');
+    $genders = CRM_Contact_BAO_Contact::buildOptions('gender_id');
+    $gender =  CRM_Utils_Array::value(C_GENDER, $params, NULL) ? $genders[$params[C_GENDER]] : NULL;
+    // Create child
+    $cParams = array(
+      'first_name' => CRM_Utils_Array::value(C_FIRST_NAME, $params, NULL),
+      'last_name' => CRM_Utils_Array::value(C_LAST_NAME, $params, NULL),
+      'birth_date' => CRM_Utils_Array::value(C_DOB, $params, NULL),
+      'gender' => $gender,
+      'contact_type' => 'Individual',
+      'contact_sub_type' => 'Child',
+    );
+    $child = civicrm_api3('Contact', 'create', $cParams);
+    if (!empty($child['id'])) {
+      civicrm_api3("Relationship", "create", array(
+        "contact_id_b" => $params['contactID'],
+        "contact_id_a" => $child['id'],
+        "relationship_type_id" => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Child of', 'id', 'name_a_b'),
+      ));
+    }
   }
 }
 
