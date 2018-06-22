@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="biz.jmaconsulting.ao" type="module">
+  <file>ao</file>
+  <name>AO Customization</name>
+  <description>Holds customization code for Autism Ontario site</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>JMA Consulting</author>
+    <email>support@jmaconsulting.biz</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">http://FIXME</url>
+    <url desc="Documentation">http://FIXME</url>
+    <url desc="Support">http://FIXME</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate>2018-06-21</releaseDate>
+  <version>1.0</version>
+  <develStage>alpha</develStage>
+  <compatibility>
+    <ver>5</ver>
+  </compatibility>
+  <comments>This is a new, undeveloped module</comments>
+  <civix>
+    <namespace>CRM/Ao</namespace>
+  </civix>
+</extension>

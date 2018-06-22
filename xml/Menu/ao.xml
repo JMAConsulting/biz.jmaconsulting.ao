@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<menu>
+  <item>
+    <path>civicrm/membership-type/mapping</path>
+    <page_callback>CRM_Ao_Form_Mapping</page_callback>
+    <title>Mapping</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
+    <path>civicrm/ao-register-membership</path>
+    <page_callback>CRM_Ao_Form_Register</page_callback>
+    <title>Register</title>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+</menu>
