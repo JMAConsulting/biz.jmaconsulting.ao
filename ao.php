@@ -8,6 +8,11 @@ require_once 'ao.civix.php';
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
 function ao_civicrm_config(&$config) {
+  CRM_Core_Resources::singleton()->addScript(
+    "CRM.$(function($) {
+      $('toolbar-item-administration-tray').removeClass('is-active');
+    });"
+  );
   _ao_civix_civicrm_config($config);
 }
 
