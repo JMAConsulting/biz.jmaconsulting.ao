@@ -1,11 +1,6 @@
 <?php
-define('LANG_SPOKEN', 'custom_10');
-define('LANG_OTHER', 'custom_22');
-define('C_FIRST_NAME', 'custom_17');
-define('C_LAST_NAME', 'custom_18');
-define('C_DOB', 'custom_20');
-define('C_GENDER', 'custom_21');
 
+require_once 'ao.variables.php';
 require_once 'ao.civix.php';
 
 /**
@@ -78,6 +73,15 @@ function ao_civicrm_uninstall() {
 
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
+    CRM_Core_Resources::singleton()->addScript(
+      "CRM.$(function($) {
+        $('#editrow-" . CNAME_MATCH_GIFT . "').toggle(($(\"input[name='" . C_MATCH_GIFT . "']:checked\").val() == 1));
+        $('input[name=\"" . C_MATCH_GIFT . "\"]').on('click', function() {
+          var value = $(this).val();
+          $('#editrow-" . CNAME_MATCH_GIFT . "').toggle((value == 1));
+        });
+      });"
+    );
   }
   if ($formName == 'CRM_Event_Form_Registration_Register') {
     if (array_key_exists(LANG_SPOKEN, $form->_fields) && array_key_exists(LANG_OTHER, $form->_fields)) {
