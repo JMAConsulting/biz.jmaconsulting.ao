@@ -9,4 +9,4 @@ define('C_GENDER', 'custom_21');
 define('C_MATCH_GIFT', 'custom_12');
 define('CNAME_MATCH_GIFT', 'custom_16');
 define('CONTRI_MAIL_MATCH', 'custom_15');
-define('CONTACT_MAIL_MATCH', 'custom_1');
+define('CONTACT_MAIL_MATCH', 'honor[custom_1]');

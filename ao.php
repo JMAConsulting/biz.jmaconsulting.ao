@@ -81,9 +81,13 @@ function ao_civicrm_buildForm($formName, &$form) {
           $('#editrow-" . CNAME_MATCH_GIFT . "').toggle((value == 1));
         });
         $('#editrow-" . CONTRI_MAIL_MATCH . "').hide();
-        $('input[name=\"" . CONTACT_MAIL_MATCH . "\"]').on('click', function() {
+        $('input[name=\"" . CONTACT_MAIL_MATCH . "\"').on('click', function() {
           var value = $(this).val();
-          $(\"input[name='" . CONTRI_MAIL_MATCH . "']\").prop('checked', (value == 1));
+          $.each($('input[name=\"" . CONTACT_MAIL_MATCH . "\"'), function() {
+            if (value == $(this).val()) {
+              $(this).prop('checked', true);
+            }
+          });
         });
       });"
     );
