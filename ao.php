@@ -80,7 +80,7 @@ function ao_civicrm_buildForm($formName, &$form) {
           var value = $(this).val();
           $('#editrow-" . CNAME_MATCH_GIFT . "').toggle((value == 1));
         });
-        $('#editrow-'" . CONTRI_MAIL_MATCH . "').hide();
+        $('#editrow-" . CONTRI_MAIL_MATCH . "').hide();
         $('input[name=\"" . CONTACT_MAIL_MATCH . "\"]').on('click', function() {
           var value = $(this).val();
           $(\"input[name='" . CONTRI_MAIL_MATCH . "']\").prop('checked', (value == 1));
