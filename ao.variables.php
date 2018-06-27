@@ -7,4 +7,4 @@ define('C_LAST_NAME', 'custom_18');
 define('C_DOB', 'custom_20');
 define('C_GENDER', 'custom_21');
 define('C_MATCH_GIFT', 'custom_12');
-define('CNAME_MATCH_GIFT', 'custom_16')
+define('CNAME_MATCH_GIFT', 'custom_16');
