@@ -83,7 +83,7 @@ function ao_civicrm_buildForm($formName, &$form) {
         $('#editrow-" . CONTRI_MAIL_MATCH . "').hide();
         $('input[name=\"" . CONTACT_MAIL_MATCH . "\"').on('click', function() {
           var value = $(this).val();
-          $.each($('input[name=\"" . CONTACT_MAIL_MATCH . "\"'), function() {
+          $.each($('input[name=\"" . CONTRI_MAIL_MATCH . "\"'), function() {
             if (value == $(this).val()) {
               $(this).prop('checked', true);
             }
