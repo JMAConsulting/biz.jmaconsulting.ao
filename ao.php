@@ -78,14 +78,6 @@ function ao_civicrm_uninstall() {
 
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
-    CRM_Core_Resources::singleton()->addScript(
-      "CRM.$(function($) {
-        if ($('#email-5').length) {
-          $('#editrow-email-5').insertAfter('.billing_last_name-section');
-          $('.custom_post_profile-group').hide();
-        }
-      });"
-    );
   }
   if ($formName == 'CRM_Event_Form_Registration_Register') {
     if (array_key_exists(LANG_SPOKEN, $form->_fields) && array_key_exists(LANG_OTHER, $form->_fields)) {
