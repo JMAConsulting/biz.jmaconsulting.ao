@@ -93,7 +93,7 @@ function ao_civicrm_buildForm($formName, &$form) {
     );
   }
   if ($formName == 'CRM_Contribute_Form_ContributionView' && ($contributionID = CRM_Utils_Array::value('id', $_GET))) {
-    $string = '&nbsp;&nbsp;&nbsp;&bsp;';
+    $string = '&nbsp;&nbsp;&nbsp;&nbsp;';
     foreach ([CHAPTER, GIFT_TYPE] as $customID) {
       $label = civicrm_api3('CustomField', 'getValue', ['id' => $customID, 'return' => 'label']);
       $value = CRM_Core_BAO_CustomField::displayValue(civicrm_api3('Contribution', 'getValue', ['id' => $contributionID, 'return' => 'custom_' . $customID]), $customID);
