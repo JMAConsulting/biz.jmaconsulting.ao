@@ -10,3 +10,5 @@ define('C_MATCH_GIFT', 'custom_12');
 define('CNAME_MATCH_GIFT', 'custom_16');
 define('CONTRI_MAIL_MATCH', 'custom_15');
 define('CONTACT_MAIL_MATCH', 'honor[custom_1]');
+define('CHAPTER', 14);
+define('GIFT_TYPE', 13);
