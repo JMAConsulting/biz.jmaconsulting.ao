@@ -93,17 +93,21 @@ function ao_civicrm_buildForm($formName, &$form) {
     );
   }
   if ($formName == 'CRM_Contribute_Form_ContributionView' && ($contributionID = CRM_Utils_Array::value('id', $_GET))) {
-    $string = '&nbsp;&nbsp;&nbsp;';
+    $string = '&nbsp;&nbsp;&nbsp;&bsp;';
     foreach ([CHAPTER, GIFT_TYPE] as $customID) {
       $label = civicrm_api3('CustomField', 'getValue', ['id' => $customID, 'return' => 'label']);
       $value = CRM_Core_BAO_CustomField::displayValue(civicrm_api3('Contribution', 'getValue', ['id' => $contributionID, 'return' => 'custom_' . $customID]), $customID);
-      $string .= "&nbsp;&nbsp;&nbsp;<span class=\"label\"><strong>$label</strong></span>&nbsp;$value";
+      $string .= "&nbsp;&nbsp;&nbsp;<span class=\"label\"><strong>$label</strong></span>:&nbsp;$value";
     }
-     CRM_Core_Resources::singleton()->addScript(
-       "CRM.$(function($) {
-         $('.crm-contribution-view-form-block table > tbody > tr:nth-child(2) td:nth-child(2)').append('$string')
-       });"
-     );
+    CRM_Core_Resources::singleton()->addScript(
+      "CRM.$(function($) {
+        $.each($('.crm-contribution-view-form-block table > tbody > tr:nth-child(2)'), function() {
+          if ($('td', this).length == 2) {
+            $('td:nth-child(2)', this).append('$string');
+          }
+        });
+      });"
+    );
   }
   if ($formName == 'CRM_Event_Form_Registration_Register') {
     if (array_key_exists(LANG_SPOKEN, $form->_fields) && array_key_exists(LANG_OTHER, $form->_fields)) {
