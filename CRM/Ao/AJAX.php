@@ -44,7 +44,7 @@ public static function getParticipantList() {
     $participant['DT_RowAttr']['data-entity'] = 'participant';
     $participant['DT_RowAttr']['data-id'] = $values['id'];
 
-    $participant['event'] = $values['event_title'];
+    $participant['event'] = sprintf('<a href=%s>%s</a>', CRM_Utils_System::url('civicrm/event/info', "reset=1&id=" . $values['event_id'] . "&context=dashboard"), $values['event_title']);
     $participant['start_date'] = CRM_Utils_Date::customFormat($values['event_start_date']);
     if (!empty($values['event_end_date'])) {
       $participant['start_date'] .= '  &nbsp; - &nbsp; ' . CRM_Utils_Date::customFormat($values['event_end_date']);
