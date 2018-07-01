@@ -12,4 +12,9 @@
     <title>Register</title>
     <access_arguments>access CiviCRM</access_arguments>
   </item>
+  <item>
+    <path>civicrm/ao-get-participant</path>
+    <page_callback>CRM_Ao_AJAX::getParticipantList</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
 </menu>
