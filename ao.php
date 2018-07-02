@@ -118,12 +118,18 @@ function ao_civicrm_buildForm($formName, &$form) {
     CRM_Core_Resources::singleton()->addScript(
       "CRM.$(function($) {
         $('select[id^=\"soft_credit_type\"]').on('change', function() {
-          var value = $(this).val();
+          var value = $(this).val(),
+          index = 0;
+          $.each(CRM.config.entityRef.contactCreate, function(k, v) {
+            if (v.type == 'Individual') {
+              index = k;
+            }
+          });
           if (value == 1 || value == 2) {
-            CRM.config.entityRef.contactCreate[0].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid=" . TRIBUTE_PROFILE_ID ."');
+            CRM.config.entityRef.contactCreate[index].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid=" . TRIBUTE_PROFILE_ID ."');
           }
           else {
-            CRM.config.entityRef.contactCreate[0].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid={$defaultProfileID}');
+            CRM.config.entityRef.contactCreate[index].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid={$defaultProfileID}');
           }
         });
       });
