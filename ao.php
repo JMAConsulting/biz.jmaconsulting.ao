@@ -109,6 +109,26 @@ function ao_civicrm_buildForm($formName, &$form) {
       });"
     );
   }
+  if ($formName == 'CRM_Contribute_Form_Contribution') {
+    $defaultProfileID = civicrm_api3('uf_group', 'getvalue', [
+      'name' => 'new_individual',
+      'is_active' => 1,
+      'return' => 'id',
+    ]);
+    CRM_Core_Resources::singleton()->addScript(
+      "CRM.$(function($) {
+        $('select[id^=\"soft_credit_type\"]').on('change', function() {
+          var value = $(this).val();
+          if (value == 1 || value == 2) {
+            CRM.config.entityRef.contactCreate[0].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid=" . TRIBUTE_PROFILE_ID ."');
+          }
+          else {
+            CRM.config.entityRef.contactCreate[0].url = CRM.url('civicrm/profile/create?reset=1&context=dialog&gid={$defaultProfileID}');
+          }
+        });
+      });
+    ");
+  }
   if ($formName == 'CRM_Event_Form_Registration_Register') {
     if (array_key_exists(LANG_SPOKEN, $form->_fields) && array_key_exists(LANG_OTHER, $form->_fields)) {
       $form->assign('lang_spoken', LANG_SPOKEN);
