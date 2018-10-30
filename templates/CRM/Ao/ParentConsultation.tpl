@@ -2,10 +2,10 @@
 <script type="text/javascript">
 CRM.$(function($) {
   $( document ).ajaxComplete(function( event, xhr, settings ) {
-    var adult = 'custom_332_-1_Adult Needs';
+    var adult = 'custom_332_-1_AdultNeeds';
     var adultoptions = 'custom_333_-1-row';
 
-    var aoinfo = 'custom_332_-1_AO info';
+    var aoinfo = 'custom_332_-1_AOinfo';
     var aoinfooptions = 'custom_334_-1-row';
 
     var school = 'custom_332_-1_School';

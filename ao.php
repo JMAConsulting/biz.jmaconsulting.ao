@@ -71,6 +71,26 @@ function ao_civicrm_uninstall() {
   _ao_civix_civicrm_uninstall();
 }
 
+function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  if ($formName == "CRM_Activity_Form_Activity") {
+    if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
+      if(count(array_filter($fields[ADULT_NEEDS])) == 0) {
+        $errors[ADULT_NEEDS] = ts('Please specify one of Adult Needs options');
+      }
+    }
+    if (!empty($fields[CURRENT_NEEDS]['AOinfo'])) {
+      if(count(array_filter($fields[AO_INFO])) == 0) {
+        $errors[AO_INFO] = ts('Please specify one of AO info options');
+      }
+    }
+    if (!empty($fields[CURRENT_NEEDS]['School'])) {
+      if(count(array_filter($fields[SCHOOL])) == 0) {
+        $errors[SCHOOL] = ts('Please specify one of School options');
+      }
+    }
+  }
+}
+
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     CRM_Core_Resources::singleton()->addScript(
