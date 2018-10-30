@@ -37,10 +37,10 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
       CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, NULL, 'name')
     );
     if (strstr($eventType, 'SLO ')) {
-      $this->assign('subsetID', 31);
+      $this->assign('subset', 'Subset_3');
     }
     elseif (strstr($eventType, 'Workshop') && $eventType != 'Workshop Community Training') {
-      $this->assign('subsetID', 32);
+      $this->assign('subset', 'Subset_2');
     }
 
     $this->addButtons(array(

@@ -1,2 +1,2 @@
 <?php
-define('ACTIVTY_TYPE_ID', 1);
+define('ACTIVTY_TYPE_ID', 55);
