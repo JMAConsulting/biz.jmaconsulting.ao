@@ -25,18 +25,23 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
       }
     }
 
-    //if (!empty($_POST['hidden_custom'])) {
-    //  $this->set('type', 'Activity');
-    //  CRM_Custom_Form_CustomData::preProcess($this, NULL, NULL, 1, 'Activity', $this->_id);
-    //  CRM_Custom_Form_CustomData::buildQuickForm($this);
-      //CRM_Custom_Form_CustomData::setDefaultValues($this);
-    //}
   }
 
   public function buildQuickForm() {
     CRM_Utils_System::setTitle(ts('Event Feedback Form'));
     $this->assign('customDataType', 'Activity');
     $this->assign('customDataSubType', ACTIVTY_TYPE_ID);
+
+    $eventType = CRM_Utils_Array::value(
+      civicrm_api3('Event', 'getvalue', ['id' => $this->_eventID, 'return' => 'event_type_id']),
+      CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, NULL, 'name')
+    );
+    if (strstr($eventType, 'SLO ')) {
+      $this->assign('subsetID', 31);
+    }
+    elseif (strstr($eventType, 'Workshop') && $eventType != 'Workshop Community Training') {
+      $this->assign('subsetID', 32);
+    }
 
     $this->addButtons(array(
       array(
