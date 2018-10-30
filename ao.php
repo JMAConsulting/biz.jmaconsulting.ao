@@ -144,6 +144,11 @@ function ao_civicrm_buildForm($formName, &$form) {
       'template' => 'CRM/Ao/Ao.tpl',
     ));
   }
+  if ($formName == "CRM_Activity_Form_Activity") {
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => 'CRM/Ao/ParentConsultation.tpl',
+    ));
+  }
 }
 
 function ao_civicrm_postProcess($formName, &$form) {
