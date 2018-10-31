@@ -42,6 +42,9 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
     elseif (strstr($eventType, 'Workshop') && $eventType != 'Workshop Community Training') {
       $this->assign('subset', 'Subset_2');
     }
+    else {
+      $this->assign('subset', 'All');
+    }
 
     $this->addButtons(array(
       array(
