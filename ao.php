@@ -4,23 +4,6 @@ require_once 'ao.variables.php';
 require_once 'ao.civix.php';
 
 /**
- * Implements hook_civicrm_config().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
- */
-function ao_civicrm_config(&$config) {
-  CRM_Core_Resources::singleton()->addScript(
-    "CRM.$(function($) {
-      $('#toolbar-administration').hide();
-      $('.crm-hidemenu').on('click', function() {
-        $('#toolbar-administration').show();
-      });
-    });"
-  );
-  _ao_civix_civicrm_config($config);
-}
-
-/**
  * Implements hook_civicrm_xmlMenu().
  *
  * @param $files array(string)
