@@ -99,6 +99,8 @@ Class CRM_ROCR_Import {
         'custom_' . $importSource => "ROCR",
         'custom_' . $rocrId => $dao->FamilyID,
       ];
+      $parentParams['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
+      $parentParams['custom_' . $region] = $this->getRegion($dao->RCPRegion);
       $ruleType = 'First_Last_Email_10';
       $pCid = $this->checkDupes($parentParams, $ruleType);
       if ($pCid) {
@@ -181,6 +183,8 @@ Class CRM_ROCR_Import {
             'custom_' . $importSource => "ROCR",
             'custom_' . $rocrId => $dao->FamilyID,
           ];
+          $siblingParams['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
+          $siblingParams['custom_' . $region] = $this->getRegion($dao->RCPRegion);
           if (!empty($dao->$dob)) {
             $siblingParams['birth_date'] = date('m/d/Y', strtotime($dao->$dob));
           }
