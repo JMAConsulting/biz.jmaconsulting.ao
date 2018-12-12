@@ -2,8 +2,8 @@
 
 Class CRM_ROCR_Import {
 
-  //public $civicrmPath = '/var/www/jma.staging.autismontario.com/htdocs/vendor/civicrm/civicrm-core/';
-  public $civicrmPath = '/home/edsel/public_html/test/sites/all/modules/civicrm/';
+  public $civicrmPath = '/var/www/jma.staging.autismontario.com/htdocs/vendor/civicrm/civicrm-core/';
+  //public $civicrmPath = '/home/edsel/public_html/test/sites/all/modules/civicrm/';
   public $sourceContactId = '';
 
   function __construct() {
@@ -54,7 +54,7 @@ Class CRM_ROCR_Import {
       'name' => 'Import_Source',
       'return' => 'id',
     ));
-    $sql = "SELECT * FROM rocr WHERE FamilyID = 'ES-65307'";
+    $sql = "SELECT * FROM rocr WHERE FamilyID IN (SELECT FamilyID FROM missingrocr)";
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     while ($dao->fetch()) {

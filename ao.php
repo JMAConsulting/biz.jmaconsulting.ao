@@ -4,6 +4,17 @@ require_once 'ao.variables.php';
 require_once 'ao.civix.php';
 
 /**
+ * Implements hook_civicrm_config().
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
+ */
+function ao_civicrm_config(&$config) {
+  
+  CRM_Core_Resources::singleton()->addStyleFile('biz.jmaconsulting.ao', 'css/aostyle.css');
+  _ao_civix_civicrm_config($config);
+}
+
+/**
  * Implements hook_civicrm_xmlMenu().
  *
  * @param $files array(string)
@@ -72,6 +83,16 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
       }
     }
   }
+}
+
+function ao_civicrm_dashboard_defaults($availableDashlets, &$defaultDashlets){
+   $contactID = CRM_Core_Session::singleton()->get('userID');
+   $defaultDashlets[] = array(
+    'dashboard_id' => 3,
+    'is_active' => 1,
+    'column_no' => 2,
+    'contact_id' => $contactID,
+   );
 }
 
 function ao_civicrm_buildForm($formName, &$form) {
@@ -151,31 +172,6 @@ function ao_civicrm_buildForm($formName, &$form) {
     CRM_Core_Region::instance('page-body')->add(array(
       'template' => 'CRM/Ao/ParentConsultation.tpl',
     ));
-  }
-}
-
-function ao_civicrm_postProcess($formName, &$form) {
-  if ($formName == 'CRM_Event_Form_Registration_Confirm') {
-    $params = $form->getVar('_params');
-    $genders = CRM_Contact_BAO_Contact::buildOptions('gender_id');
-    $gender =  CRM_Utils_Array::value(C_GENDER, $params, NULL) ? $genders[$params[C_GENDER]] : NULL;
-    // Create child
-    $cParams = array(
-      'first_name' => CRM_Utils_Array::value(C_FIRST_NAME, $params, NULL),
-      'last_name' => CRM_Utils_Array::value(C_LAST_NAME, $params, NULL),
-      'birth_date' => CRM_Utils_Array::value(C_DOB, $params, NULL),
-      'gender' => $gender,
-      'contact_type' => 'Individual',
-      'contact_sub_type' => 'Child',
-    );
-    $child = civicrm_api3('Contact', 'create', $cParams);
-    if (!empty($child['id'])) {
-      civicrm_api3("Relationship", "create", array(
-        "contact_id_b" => $params['contactID'],
-        "contact_id_a" => $child['id'],
-        "relationship_type_id" => CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Child of', 'id', 'name_a_b'),
-      ));
-    }
   }
 }
 

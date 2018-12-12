@@ -1,0 +1,8 @@
+.crm-container table .crm-icon.Individual-subtype-icon::before {
+    font-family: 'FontAwesome';
+    font-style: normal;
+    text-rendering: auto;
+    font-size: 13px;
+    content: "";
+    color: #4d4d69;
+}
