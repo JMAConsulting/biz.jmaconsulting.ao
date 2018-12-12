@@ -14,6 +14,7 @@ Class CRM_Account_Import {
     require_once $civicrmPath .'civicrm.config.php';
     require_once $civicrmPath .'CRM/Core/Config.php';
     $config = CRM_Core_Config::singleton();
+  
   }
 
   function accountImport() {
