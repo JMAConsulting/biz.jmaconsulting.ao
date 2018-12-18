@@ -54,7 +54,7 @@ Class CRM_ROCR_Import {
       'name' => 'Import_Source',
       'return' => 'id',
     ));
-    $sql = "SELECT * FROM rocr WHERE FamilyID IN (SELECT FamilyID FROM missingrocr)";
+    $sql = "SELECT * FROM rocr";
     $dao = CRM_Core_DAO::executeQuery($sql);
 
     while ($dao->fetch()) {
@@ -68,6 +68,17 @@ Class CRM_ROCR_Import {
       if ($dao->FIBirthMonth && $dao->FIBirthDay && $dao->FIBirthYear) {
         $params['birth_date'] = date('m/d/Y', strtotime($childBirthDate));
       }
+      if (empty($dao->ConsCompletedDate)) {
+        if (!empty($params['birth_date'])) {
+          $diagnosisDate = $params['birth_date'];
+        }
+        else {
+          $diagnosisDate = DATE('Ymd', strtotime('1969-12-31'));
+        }
+      }
+      else {
+        $diagnosisDate = DATE('Ymd', strtotime($dao->ConsCompletedDate));
+      }
       $ruleType = 'First_Last_BirthDate_9';
       $cid = $this->checkDupes($params, $ruleType);
       if ($cid) {
@@ -78,13 +89,49 @@ Class CRM_ROCR_Import {
           3 => [$dao->FIChildFirstName, 'String'],
           4 => [$dao->FIChildSurname, 'String'],
         ];
-        CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
+        //CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
       }
       $params['custom_' . $rocrId] = $dao->FamilyID;
       $params['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
       $params['custom_' . $region] = $this->getRegion($dao->RCPRegion);
-      $params['custom_' . $firstContact] = date('m/d/Y', strtotime($dao->DateOfFirstContact));
-      $params['custom_' . $consCompleted] = date('m/d/Y', strtotime($dao->ConsCompletedDate));
+      if (!empty($dao->DateOfFirstContact)) {
+        $params['custom_' . $firstContact] = DATE('Ymd', strtotime($dao->DateOfFirstContact));
+      }
+      $params['custom_' . $consCompleted] = $diagnosisDate;
+      $params['custom_29'] = $diagnosisDate;
+      $params['custom_28'] = 1;
+      $language = $otherLang = [];
+      if (!empty($dao->ConsLanguage)) {
+        if ($dao->ConsLanguage == "Aboriginal") {
+          $otherLang[] = $dao->ConsLanguage;
+        }
+        else {
+          if ($dao->ConsLanguage == "Francais") {
+            $dao->ConsLanguage = "French";
+          }
+          $language[] = $dao->ConsLanguage;
+        }
+      }
+      if (!empty($dao->ConsLanguageOther)) {
+        if (strpos($dao->ConsLanguageOther, 'Chinese') !== false) {
+          $dao->ConsLanguageOther = "Chinese (Other than Cantonese)";
+        }
+        else {
+          $checkLang = CRM_Core_DAO::singleValueQuery("SELECT id FROM civicrm_option_value WHERE value = '{$dao->ConsLanguageOther}' AND option_group_id = 105");
+          if ($checkLang) {
+            $language[] = $dao->ConsLanguageOther;
+          }
+          else {
+            $otherLang[] = $dao->ConsLanguageOther;
+          }
+        }
+      }
+      if (!empty($language)) {
+        $params['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+      }
+      if (!empty($otherLang)) {
+        $params['custom_22'] = implode(', ', $otherLang);
+      }
       $params['custom_' . $consLanguage] = $dao->ConsLanguage;
       $params['custom_' . $consLanguageOther] = $dao->ConsLanguageOther;
       $params['custom_' . $importSource] = "ROCR";
@@ -99,6 +146,12 @@ Class CRM_ROCR_Import {
         'custom_' . $importSource => "ROCR",
         'custom_' . $rocrId => $dao->FamilyID,
       ];
+      if (!empty($language)) {
+        $parentParams['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+      }
+      if (!empty($otherLang)) {
+        $parentParams['custom_22'] = implode(', ', $otherLang);
+      }
       $parentParams['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
       $parentParams['custom_' . $region] = $this->getRegion($dao->RCPRegion);
       $ruleType = 'First_Last_Email_10';
@@ -111,57 +164,57 @@ Class CRM_ROCR_Import {
           3 => [$dao->FIFName, 'String'],
           4 => [$dao->FISurname, 'String'],
         ];
-        CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
+        //CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
 
       }
       $parent = civicrm_api3('Contact', 'create', $parentParams);
-      if ($child['id'] && $parent['id']) {
-        $this->addRelationship($child['id'], $parent['id'], "Child of");
-      }
+      /* if ($child['id'] && $parent['id']) { */
+      /*   $this->addRelationship($child['id'], $parent['id'], "Child of"); */
+      /* } */
 
-      if (!empty($parent['id'])) {
-        // Phones
-        if ($dao->FIHomeTel) {
-          civicrm_api3('Phone', 'create', [
-            "phone" => $dao->FIHomeTel,
-            "location_type_id" => "Home",
-            "contact_id" => $parent['id'],
-          ]);
-        }
-        if ($dao->FIMobile) {
-          civicrm_api3('Phone', 'create', [
-            "phone" => $dao->FIMobile,
-            "location_type_id" => "Home",
-            "phone_type_id" => "Mobile",
-            "contact_id" => $parent['id'],
-          ]);
-        }
-        if ($dao->FIWorkTel) {
-          civicrm_api3('Phone', 'create', [
-            "phone" => $dao->FIWorkTel,
-            "location_type_id" => "Work",
-            "contact_id" => $parent['id'],
-          ]);
-        }
+      //if (!empty($parent['id'])) /* { */
+      /*   // Phones */
+      /*   if ($dao->FIHomeTel) { */
+      /*     civicrm_api3('Phone', 'create', [ */
+      /*       "phone" => $dao->FIHomeTel, */
+      /*       "location_type_id" => "Home", */
+      /*       "contact_id" => $parent['id'], */
+      /*     ]); */
+      /*   } */
+      /*   if ($dao->FIMobile) { */
+      /*     civicrm_api3('Phone', 'create', [ */
+      /*       "phone" => $dao->FIMobile, */
+      /*       "location_type_id" => "Home", */
+      /*       "phone_type_id" => "Mobile", */
+      /*       "contact_id" => $parent['id'], */
+      /*     ]); */
+      /*   } */
+      /*   if ($dao->FIWorkTel) { */
+      /*     civicrm_api3('Phone', 'create', [ */
+      /*       "phone" => $dao->FIWorkTel, */
+      /*       "location_type_id" => "Work", */
+      /*       "contact_id" => $parent['id'], */
+      /*     ]); */
+      /*   } */
 
-        // Address
-        $address = civicrm_api3('Address', 'create', [
-          'street_address' => $dao->FIStreet,
-          'city' => $dao->FICity,
-          'postal_code' => $dao->FIPostalCode,
-          'location_type_id' => "Home",
-          'contact_id' => $parent['id'],
-        ]);
+      /*   // Address */
+      /*   $address = civicrm_api3('Address', 'create', [ */
+      /*     'street_address' => $dao->FIStreet, */
+      /*     'city' => $dao->FICity, */
+      /*     'postal_code' => $dao->FIPostalCode, */
+      /*     'location_type_id' => "Home", */
+      /*     'contact_id' => $parent['id'], */
+      /*   ]); */
 
-        // Share this address with the child.
-        if (!empty($address['id']) && !empty($child['id'])) {
-          civicrm_api3('Address', 'create', [
-            'location_type_id' => "Home",
-            'contact_id' => $child['id'],
-            'master_id' => $address['id'],
-          ]);
-        }
-      }
+      /*   // Share this address with the child. */
+      /*   if (!empty($address['id']) && !empty($child['id'])) { */
+      /*     civicrm_api3('Address', 'create', [ */
+      /*       'location_type_id' => "Home", */
+      /*       'contact_id' => $child['id'], */
+      /*       'master_id' => $address['id'], */
+      /*     ]); */
+      /*   } */
+      /* } */
 
       for ($i = 1; $i <= 3; $i++) {
         // Create siblings.
@@ -182,9 +235,16 @@ Class CRM_ROCR_Import {
             'contact_sub_type' => 'Child',
             'custom_' . $importSource => "ROCR",
             'custom_' . $rocrId => $dao->FamilyID,
+            'custom_29' => $diagnosisDate,
           ];
           $siblingParams['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
           $siblingParams['custom_' . $region] = $this->getRegion($dao->RCPRegion);
+          if (!empty($language)) {
+            $siblingParams['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+          }
+          if (!empty($otherLang)) {
+            $siblingParams['custom_22'] = implode(', ', $otherLang);
+          }
           if (!empty($dao->$dob)) {
             $siblingParams['birth_date'] = date('m/d/Y', strtotime($dao->$dob));
           }
@@ -198,12 +258,12 @@ Class CRM_ROCR_Import {
               3 => [$sName[0], 'String'],
               4 => [$lName, 'String'],
             ];
-            CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
+            //CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
           }
           $sibling = civicrm_api3('Contact', 'create', $siblingParams);
-          if (!empty($child['id'])) {
-            $this->addRelationship($child['id'], $sibling['id'], "Sibling of");
-          }
+          /* if (!empty($child['id'])) { */
+          /*   $this->addRelationship($child['id'], $sibling['id'], "Sibling of"); */
+          /* } */
         }
       }
     }
