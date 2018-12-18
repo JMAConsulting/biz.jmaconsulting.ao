@@ -172,7 +172,7 @@ Class CRM_ROCR_Import {
         $this->addRelationship($child['id'], $parent['id'], "Child of");
       }
 
-      if (!empty($parent['id'])) /* { */
+      if (!empty($parent['id'])) {
         // Phones
         if ($dao->FIHomeTel) {
           civicrm_api3('Phone', 'create', [
