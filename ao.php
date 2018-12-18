@@ -173,6 +173,16 @@ function ao_civicrm_buildForm($formName, &$form) {
       'template' => 'CRM/Ao/ParentConsultation.tpl',
     ));
   }
+  if ($formName == "CRM_Event_Form_Participant") {
+    CRM_Core_Resources::singleton()->addScript(
+      "CRM.$(function($) {
+         $( document ).ajaxComplete(function( event, xhr, settings ) {
+           $('.pay-later_info-section').css('margin-top', '45px');
+           $('#email-receipt table').css('margin-top', '45px');
+         });
+      });"
+    );
+  }
 }
 
 /**
