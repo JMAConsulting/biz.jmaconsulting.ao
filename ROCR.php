@@ -127,7 +127,7 @@ Class CRM_ROCR_Import {
         }
       }
       if (!empty($language)) {
-        $params['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+        $params['custom_10'] = $language;
       }
       if (!empty($otherLang)) {
         $params['custom_22'] = implode(', ', $otherLang);
@@ -147,7 +147,7 @@ Class CRM_ROCR_Import {
         'custom_' . $rocrId => $dao->FamilyID,
       ];
       if (!empty($language)) {
-        $parentParams['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+        $parentParams['custom_10'] = $language;
       }
       if (!empty($otherLang)) {
         $parentParams['custom_22'] = implode(', ', $otherLang);
@@ -168,53 +168,53 @@ Class CRM_ROCR_Import {
 
       }
       $parent = civicrm_api3('Contact', 'create', $parentParams);
-      /* if ($child['id'] && $parent['id']) { */
-      /*   $this->addRelationship($child['id'], $parent['id'], "Child of"); */
-      /* } */
+      if ($child['id'] && $parent['id']) {
+        $this->addRelationship($child['id'], $parent['id'], "Child of");
+      }
 
-      //if (!empty($parent['id'])) /* { */
-      /*   // Phones */
-      /*   if ($dao->FIHomeTel) { */
-      /*     civicrm_api3('Phone', 'create', [ */
-      /*       "phone" => $dao->FIHomeTel, */
-      /*       "location_type_id" => "Home", */
-      /*       "contact_id" => $parent['id'], */
-      /*     ]); */
-      /*   } */
-      /*   if ($dao->FIMobile) { */
-      /*     civicrm_api3('Phone', 'create', [ */
-      /*       "phone" => $dao->FIMobile, */
-      /*       "location_type_id" => "Home", */
-      /*       "phone_type_id" => "Mobile", */
-      /*       "contact_id" => $parent['id'], */
-      /*     ]); */
-      /*   } */
-      /*   if ($dao->FIWorkTel) { */
-      /*     civicrm_api3('Phone', 'create', [ */
-      /*       "phone" => $dao->FIWorkTel, */
-      /*       "location_type_id" => "Work", */
-      /*       "contact_id" => $parent['id'], */
-      /*     ]); */
-      /*   } */
+      if (!empty($parent['id'])) /* { */
+        // Phones
+        if ($dao->FIHomeTel) {
+          civicrm_api3('Phone', 'create', [
+            "phone" => $dao->FIHomeTel,
+            "location_type_id" => "Home",
+            "contact_id" => $parent['id'],
+          ]);
+        }
+        if ($dao->FIMobile) {
+          civicrm_api3('Phone', 'create', [
+            "phone" => $dao->FIMobile,
+            "location_type_id" => "Home",
+            "phone_type_id" => "Mobile",
+            "contact_id" => $parent['id'],
+          ]);
+        }
+        if ($dao->FIWorkTel) {
+          civicrm_api3('Phone', 'create', [
+            "phone" => $dao->FIWorkTel,
+            "location_type_id" => "Work",
+            "contact_id" => $parent['id'],
+          ]);
+        }
 
-      /*   // Address */
-      /*   $address = civicrm_api3('Address', 'create', [ */
-      /*     'street_address' => $dao->FIStreet, */
-      /*     'city' => $dao->FICity, */
-      /*     'postal_code' => $dao->FIPostalCode, */
-      /*     'location_type_id' => "Home", */
-      /*     'contact_id' => $parent['id'], */
-      /*   ]); */
+        // Address
+        $address = civicrm_api3('Address', 'create', [
+          'street_address' => $dao->FIStreet,
+          'city' => $dao->FICity,
+          'postal_code' => $dao->FIPostalCode,
+          'location_type_id' => "Home",
+          'contact_id' => $parent['id'],
+        ]);
 
-      /*   // Share this address with the child. */
-      /*   if (!empty($address['id']) && !empty($child['id'])) { */
-      /*     civicrm_api3('Address', 'create', [ */
-      /*       'location_type_id' => "Home", */
-      /*       'contact_id' => $child['id'], */
-      /*       'master_id' => $address['id'], */
-      /*     ]); */
-      /*   } */
-      /* } */
+        // Share this address with the child.
+        if (!empty($address['id']) && !empty($child['id'])) {
+          civicrm_api3('Address', 'create', [
+            'location_type_id' => "Home",
+            'contact_id' => $child['id'],
+            'master_id' => $address['id'],
+          ]);
+        }
+      }
 
       for ($i = 1; $i <= 3; $i++) {
         // Create siblings.
@@ -240,7 +240,7 @@ Class CRM_ROCR_Import {
           $siblingParams['custom_' . $chapter] = $this->getChapter($dao->RCPChapter);
           $siblingParams['custom_' . $region] = $this->getRegion($dao->RCPRegion);
           if (!empty($language)) {
-            $siblingParams['custom_10'] = CRM_Core_DAO::VALUE_SEPARATOR . implode(CRM_Core_DAO::VALUE_SEPARATOR, $language) . CRM_Core_DAO::VALUE_SEPARATOR;
+            $siblingParams['custom_10'] = $language;
           }
           if (!empty($otherLang)) {
             $siblingParams['custom_22'] = implode(', ', $otherLang);
@@ -261,9 +261,9 @@ Class CRM_ROCR_Import {
             //CRM_Core_DAO::executeQuery("INSERT INTO rocrdupes (familyid, type, first_name, last_name) VALUES (%1, %2, %3, %4)", $par);
           }
           $sibling = civicrm_api3('Contact', 'create', $siblingParams);
-          /* if (!empty($child['id'])) { */
-          /*   $this->addRelationship($child['id'], $sibling['id'], "Sibling of"); */
-          /* } */
+          if (!empty($child['id'])) {
+            $this->addRelationship($child['id'], $sibling['id'], "Sibling of");
+          }
         }
       }
     }
