@@ -222,13 +222,13 @@ function ao_civicrm_postProcess($formName, &$form) {
       ])['values']);
       if (!empty($relationship)) {
         $rels = implode(', ', $relationship);
-        $isFilled = CRM_Core_DAO::executeQuery("SELECT entity_id FROM civicrm_value_newsletter_cu_3 WHERE entity_id IN ($rels) AND (diagnosis_on_file_29 IS NOT NULL OR diagnosis_on_file_29 != '')")
+        $isFilled = CRM_Core_DAO::executeQuery("SELECT entity_id FROM civicrm_value_newsletter_cu_3 WHERE entity_id IN ($rels) AND (first_contacted_358 IS NOT NULL OR first_contacted_358 != '')")
           ->fetchAll();
         if (empty($isFilled)) {
           foreach ($relationship as $child) {
             civicrm_api3('CustomValue', 'create', [
               'entity_id' => $child,
-              'custom_12' => date('Ymd'),
+              'custom_358' => date('Ymd'),
             ]);
           }
         }
