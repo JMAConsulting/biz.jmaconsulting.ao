@@ -67,6 +67,28 @@ function ao_civicrm_uninstall() {
 
 function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   if ($formName == "CRM_Activity_Form_Activity") {
+    if ($fields['activity_type_id'] == 70) {
+      $sourceContact = $fields['source_contact_id'];
+      $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
+      $relationship = civicrm_api3('Relationship', 'get', [
+        'contact_id_b' => $sourceContact,
+        'relationship_type_id' => $relTypeId,
+        'return' => ['is_active'],
+      ]);
+      $isActive = FALSE;
+      if ($relationship['count'] >= 1) {
+        foreach ($relationship['values'] as $id => $value) {
+          if ($value['is_active']) {
+            $isActive = TRUE;
+            break;
+          }
+        }
+      }
+      if (!$relationship['count'] || !$isActive) {
+        $errors['source_contact_id'] = ts('This contact does not active an active Parent relationship');
+      }
+    }
+  }
     if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
       if(count(array_filter($fields[ADULT_NEEDS])) == 0) {
         $errors[ADULT_NEEDS] = ts('Please specify one of Adult Needs options');
@@ -172,6 +194,37 @@ function ao_civicrm_buildForm($formName, &$form) {
     CRM_Core_Region::instance('page-body')->add(array(
       'template' => 'CRM/Ao/ParentConsultation.tpl',
     ));
+  }
+}
+
+/**
+ * Implementation of hook_civicrm_postProcess
+ *
+ * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_postProcess
+ */
+function ao_civicrm_postProcess($formName, &$form) {
+  if ($formName == "CRM_Activity_Form_Activity") {
+    if ($form->_activityTypeId == 70) {
+      $sourceContact = $form->_submitValues['source_contact_id'];
+      $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
+      $relationship = CRM_Utils_Array::collect('contact_id_a', civicrm_api3('Relationship', 'get', [	
+        'contact_id_b' => $sourceContact,
+        'relationship_type_id' => $relTypeId,
+      ])['values']);
+      if (!empty($relationship)) {
+        $rels = implode(', ', $relationship);
+        $isFilled = CRM_Core_DAO::executeQuery("SELECT entity_id FROM civicrm_value_newsletter_cu_3 WHERE entity_id IN ($rels) AND (diagnosis_on_file_29 IS NOT NULL OR diagnosis_on_file_29 != '')")
+          ->fetchAll();
+        if (empty($isFilled)) {
+          foreach ($relationship as $child) {
+            civicrm_api3('CustomValue', 'create', [
+              'entity_id' => $child,
+              'custom_12' => date('Ymd'),
+            ]);
+          }
+        }
+      }
+    }
   }
 }
 
