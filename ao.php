@@ -88,7 +88,6 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
         $errors['source_contact_id'] = ts('This contact does not active an active Parent relationship');
       }
     }
-  }
     if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
       if(count(array_filter($fields[ADULT_NEEDS])) == 0) {
         $errors[ADULT_NEEDS] = ts('Please specify one of Adult Needs options');
