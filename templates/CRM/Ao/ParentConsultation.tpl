@@ -5,6 +5,14 @@ CRM.$(function($) {
     var str = settings.url;
     var txt = 'civicrm/custom';
     if(str.indexOf(txt) > -1) {
+      // Contrast Ratios
+      $('a').css('color', '#464354');
+      $('a:link:hover').css('color', '#464354');
+      $('a:link').css('color', '#464354');
+      $('.description').css('color', '#555044');
+      $('input').css('border-color', '#464354');
+      $('.select2-search input, .select2-search, .select2-results, .select2-results__option--highlighted, .select2-results__option[aria-selected=true], .select2-result-label').css('color', '#464354');
+
       var adult = 'custom_332_-1_AdultNeeds';
       var adultoptions = 'custom_333_-1-row';
 
