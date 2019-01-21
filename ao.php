@@ -9,7 +9,7 @@ require_once 'ao.civix.php';
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
 function ao_civicrm_config(&$config) {
-  
+
   CRM_Core_Resources::singleton()->addStyleFile('biz.jmaconsulting.ao', 'css/aostyle.css');
   _ao_civix_civicrm_config($config);
 }
@@ -109,7 +109,7 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
 function ao_civicrm_dashboard_defaults($availableDashlets, &$defaultDashlets){
    $contactID = CRM_Core_Session::singleton()->get('userID');
    $defaultDashlets[] = array(
-    'dashboard_id' => 3,
+    'dashboard_id' => 8,
     'is_active' => 1,
     'column_no' => 2,
     'contact_id' => $contactID,
@@ -216,7 +216,7 @@ function ao_civicrm_postProcess($formName, &$form) {
     if ($form->_activityTypeId == 70) {
       $sourceContact = $form->_submitValues['source_contact_id'];
       $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
-      $relationship = CRM_Utils_Array::collect('contact_id_a', civicrm_api3('Relationship', 'get', [	
+      $relationship = CRM_Utils_Array::collect('contact_id_a', civicrm_api3('Relationship', 'get', [
         'contact_id_b' => $sourceContact,
         'relationship_type_id' => $relTypeId,
       ])['values']);
