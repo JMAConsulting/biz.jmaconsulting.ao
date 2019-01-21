@@ -106,15 +106,49 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
   }
 }
 
-function ao_civicrm_dashboard_defaults($availableDashlets, &$defaultDashlets){
-   $contactID = CRM_Core_Session::singleton()->get('userID');
-   $defaultDashlets[] = array(
-    'dashboard_id' => 8,
-    'is_active' => 1,
-    'column_no' => 2,
-    'contact_id' => $contactID,
-   );
+function ao_civicrm_pageRun(&$page) {
+  if ($page->getVar('_name') == 'CRM_Contact_Page_DashBoard') {
+    $items = CRM_Core_BAO_Dashboard::getContactDashletsForJS();
+    try {
+      $item = civicrm_api3('Dashboard', 'getsingle', ['id' => 9]);
+      $items[1][] = array(
+        'id' => $item['id'],
+        'name' => $item['name'],
+        'title' => $item['label'],
+        'url' => CRM_Core_BAO_Dashboard::parseUrl($item['url']),
+        'cacheMinutes' => $item['cache_minutes'],
+        'fullscreenUrl' => CRM_Core_BAO_Dashboard::parseUrl($item['fullscreen_url']),
+      );
+      $page->assign('contactDashlets', $items);
+    }
+    catch (API_Exception $e) {
+    }
+  }
 }
+
+function ao_civicrm_alterReportVar($type, &$columns, &$form) {
+  if ('CRM_Report_Form_Activity' == get_class($form)) {
+    if ($type == 'columns') {
+      $columns['civicrm_contact']['filters']['current_record_type'] = array(
+        'name' => 'current_record_type',
+        'dbAlias' => '1',
+        'title' => ts('Limit To Current User as Assigne'),
+        'type' => CRM_Utils_Type::T_INT,
+        'operatorType' => CRM_Report_Form::OP_SELECT,
+        'options' => array('0' => ts('No'), '1' => ts('Yes')),
+      );
+    }
+    if ($type == 'sql' && CRM_Utils_Array::value("current_record_type_value", $form->getVar('_params')) == 1) {
+      $contactID = CRM_Core_Session::singleton()->get('userID');
+      $match = "contact_id = " . $contactID;
+      $replace = $match . " AND record_type_id = 1";
+      foreach ($form->sqlFormattedArray as $key => $sql) {
+        $form->sqlFormattedArray[$key] = str_replace($match, $replace, $sql);
+      }
+    }
+  }
+}
+
 
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
