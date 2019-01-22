@@ -148,6 +148,20 @@ function ao_civicrm_alterReportVar($type, &$columns, &$form) {
   }
 }
 
+function ao_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
+  if ($objectName == 'ContributionPage' && $op == 'contributionpage.configure.actions') {
+    foreach ($links as &$link) {
+      if (empty($link['class'])) {
+        continue;
+      }
+      foreach ($link['class'] as $key => $class) {
+        if ($class == 'disabled') {
+          unset($link['class'][$key]);
+        }
+      }
+    }
+  }
+}
 
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
