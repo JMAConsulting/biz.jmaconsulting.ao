@@ -129,13 +129,12 @@ function ao_civicrm_pageRun(&$page) {
 function ao_civicrm_alterReportVar($type, &$columns, &$form) {
   if ('CRM_Report_Form_Activity' == get_class($form)) {
     if ($type == 'columns') {
-      $columns['civicrm_contact']['filters']['current_record_type'] = array(
-        'name' => 'current_record_type',
-        'dbAlias' => '1',
-        'title' => ts('Limit To Current User as Assigne'),
+      $columns['civicrm_activity_contact']['filters']['record_type_id'] = array(
+        'name' => 'record_type_id',
+        'title' => ts('Record type'),
         'type' => CRM_Utils_Type::T_INT,
         'operatorType' => CRM_Report_Form::OP_SELECT,
-        'options' => array('0' => ts('No'), '1' => ts('Yes')),
+        'options' => ['' => '- select -' ] + CRM_Activity_BAO_ActivityContact::buildOptions('record_type_id', 'validate'),
       );
     }
     if ($type == 'sql' && CRM_Utils_Array::value("current_record_type_value", $form->getVar('_params')) == 1) {
