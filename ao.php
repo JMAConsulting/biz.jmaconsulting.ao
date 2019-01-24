@@ -110,7 +110,7 @@ function ao_civicrm_pageRun(&$page) {
   if ($page->getVar('_name') == 'CRM_Contact_Page_DashBoard') {
     $items = CRM_Core_BAO_Dashboard::getContactDashletsForJS();
     try {
-      $item = CRM_Utils_Array::value(0, civicrm_api3('Dashboard', 'get', ['id' => 10, 'sequential' => 1])['values']);
+      $item = CRM_Utils_Array::value(0, civicrm_api3('Dashboard', 'get', ['id' => 11, 'sequential' => 1])['values']);
       $items[1][] = array(
         'id' => $item['id'],
         'name' => $item['name'],
