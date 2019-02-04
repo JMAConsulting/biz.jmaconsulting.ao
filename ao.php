@@ -66,7 +66,7 @@ function ao_civicrm_uninstall() {
 }
 
 function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
-  if ($formName == "CRM_Activity_Form_Activity") {
+  if ($formName == "CRM_Activity_Form_Activity" && (in_array($form->_action, [CRM_Core_Action::ADD, CRM_Core_Action::UPDATE]))) {
     if ($fields['activity_type_id'] == 70) {
       $sourceContact = $fields['source_contact_id'];
       $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
