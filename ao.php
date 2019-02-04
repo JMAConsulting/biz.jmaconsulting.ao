@@ -254,6 +254,16 @@ function ao_civicrm_buildForm($formName, &$form) {
       });"
     );
   }
+  if ($formName == "CRM_Event_Form_Search") {
+    $rows = CRM_Core_Smarty::singleton()->get_template_vars('rows');
+    foreach ($rows as &$row) {
+      $row['action'] = str_replace('Transfer or Cancel', 'Cancel', $row['action']);
+    }
+    CRM_Core_Smarty::singleton()->assign('rows', $rows);
+  }
+  if ($formName == "CRM_Event_Form_SelfSvcUpdate") {
+    $form->add('select', 'action', ts('Cancel Registration?'), array(ts('-select-'), 2 => ts('Cancel')), TRUE);
+  }
 }
 
 /**
