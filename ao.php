@@ -103,6 +103,9 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
         $errors[SCHOOL] = ts('Please specify one of School options');
       }
     }
+    if (empty($fields['target_contact_id'])) {
+      $errors['target_contact_id'] = ts('With Contact is a required field.');
+    }
   }
 }
 
