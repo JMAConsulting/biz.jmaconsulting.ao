@@ -22,3 +22,7 @@ select.crm-form-select {
 #recordContribution {
   margin-top: 45px;
 }
+
+fieldset#mail, fieldset#thankyou, fieldset#confirm, fieldset#registration {
+  padding-top: 55px !important;
+}
