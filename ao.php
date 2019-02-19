@@ -127,6 +127,15 @@ function ao_civicrm_pageRun(&$page) {
     catch (API_Exception $e) {
     }
   }
+  if ('CRM_Contribute_Page_ContributionPage' == $page->getVar('_name')) {
+    Civi::resources()->addScript("
+    CRM.$(function($) {
+      $('.btn-slide').css('padding-right', '15px !important');
+      $('.btn-slide').css('text-indent', 'initial');
+      $('.btn-slide').css('width', 'auto');
+    });
+    ", -100, 'html-header');
+  }
 }
 
 function ao_civicrm_alterReportVar($type, &$columns, &$form) {
