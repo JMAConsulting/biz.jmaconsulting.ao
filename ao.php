@@ -130,7 +130,7 @@ function ao_civicrm_pageRun(&$page) {
   if ('CRM_Contribute_Page_ContributionPage' == $page->getVar('_name')) {
     Civi::resources()->addScript("
     CRM.$(function($) {
-      $('.btn-slide').css('padding-right', '15px !important');
+      $('.btn-slide').attr('style', 'padding-right:15px !important;');
       $('.btn-slide').css('text-indent', 'initial');
       $('.btn-slide').css('width', 'auto');
     });
@@ -197,6 +197,7 @@ function ao_civicrm_buildForm($formName, &$form) {
     );
   }
   if ($formName == 'CRM_Contribute_Form_ContributionView' && ($contributionID = CRM_Utils_Array::value('id', $_GET))) {
+    return;
     $string = '&nbsp;&nbsp;&nbsp;&nbsp;';
     foreach ([CHAPTER, GIFT_TYPE] as $customID) {
       $label = civicrm_api3('CustomField', 'getValue', ['id' => $customID, 'return' => 'label']);
