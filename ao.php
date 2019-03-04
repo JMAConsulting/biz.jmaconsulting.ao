@@ -175,6 +175,22 @@ function ao_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values
   }
 }
 
+function getMemberID() {
+  $memberID = CRM_Core_DAO::singleValueQuery("select max(membership_number_758) from civicrm_value_member_genera_9");
+  $memberID = $memberID + 1;
+  return $memberID;
+}
+
+function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
+  if ($objectName == "Membership" && $op == "create") {
+    civicrm_api3('CustomValue', 'create', array('entity_id' => $objectId, 'custom_758' => getMemberID()));
+  }
+}
+
+function ao_civicrm_postSave_civicrm_membership($dao) {
+  civicrm_api3('CustomValue', 'create', array('entity_id' => $dao->id, 'custom_758' => getMemberID()));
+}
+
 function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     CRM_Core_Resources::singleton()->addScript(
@@ -304,6 +320,9 @@ function ao_civicrm_postProcess($formName, &$form) {
         }
       }
     }
+  }
+  elseif(($formName == "CRM_Member_Form_Membership") && ($form->_action & CRM_Core_Action::ADD) && !empty($form->_id)) {
+    civicrm_api3('CustomValue', 'create', array('entity_id' => $form->_id, 'custom_758' => getMemberID()));
   }
 }
 
