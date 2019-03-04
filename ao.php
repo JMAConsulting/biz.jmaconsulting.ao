@@ -158,6 +158,17 @@ function ao_civicrm_alterReportVar($type, &$columns, &$form) {
       }
     }
   }
+  if ('CRM_Report_Form_Contribute_BatchDetail' == get_class($form)) {
+    if ($type == 'columns') {
+      $columns['civicrm_financial_trxn']['filters']['to_financial_account_id'] = array(
+        'name' => 'to_financial_account_id',
+        'title' => ts('Deposit Account'),
+        'type' => CRM_Utils_Type::T_INT,
+        'operatorType' => CRM_Report_Form::OP_SELECT,
+        'options' => ['' => '- select -' ] + CRM_Contribute_PseudoConstant::financialAccount(),
+      );
+    }
+  }
 }
 
 function ao_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values) {
