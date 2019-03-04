@@ -164,7 +164,7 @@ function ao_civicrm_alterReportVar($type, &$columns, &$form) {
         'name' => 'to_financial_account_id',
         'title' => ts('Deposit Account'),
         'type' => CRM_Utils_Type::T_INT,
-        'operatorType' => CRM_Report_Form::OP_SELECT,
+        'operatorType' => CRM_Report_Form::OP_MULTISELECT,
         'options' => ['' => '- select -' ] + CRM_Contribute_PseudoConstant::financialAccount(),
       );
     }
