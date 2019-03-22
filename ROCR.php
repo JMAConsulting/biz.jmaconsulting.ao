@@ -2,8 +2,9 @@
 
 Class CRM_ROCR_Import {
 
-  public $civicrmPath = '/var/www/jma.staging.autismontario.com/htdocs/vendor/civicrm/civicrm-core/';
+  //public $civicrmPath = '/var/www/jma.staging.autismontario.com/htdocs/vendor/civicrm/civicrm-core/';
   //public $civicrmPath = '/home/edsel/public_html/test/sites/all/modules/civicrm/';
+  public $civicrmPath = '/Users/monish/www/d8-cividemo/vendor/civicrm/civicrm-core/';
   public $sourceContactId = '';
 
   function __construct() {
@@ -54,9 +55,13 @@ Class CRM_ROCR_Import {
       'name' => 'Import_Source',
       'return' => 'id',
     ));
-    $sql = "SELECT * FROM rocr";
-    $dao = CRM_Core_DAO::executeQuery($sql);
+    $totalCount = CRM_Core_DAO::singleValueQuery("SELECT COUNT(*) FROM rocr");
+    $offset = 0;
+    $limit = 1000;
 
+    while ($limit <= $totalCount) {
+      $sql = "SELECT * FROM rocr LIMIT $offset, $limit";
+      $dao = CRM_Core_DAO::executeQuery($sql);
     while ($dao->fetch()) {
       $params = [
         'first_name' => $dao->FIChildFirstName,
@@ -266,7 +271,10 @@ Class CRM_ROCR_Import {
           }
         }
       }
-    }
+    } // end of while-fetch loop
+    $offset += ($offset == 0) ? $limit + 1 : $limit;
+    $limit += 1000;
+  } // end of limit count loop
   }
 
   protected function getChapter($chapter) {
@@ -275,7 +283,7 @@ Class CRM_ROCR_Import {
       $chapter = "Chatham Kent";
       break;
     case 'Durham':
-      $chapter = "Durham Region";
+      $chapter = "Durham";
       break;
     case 'Grey-Bruce':
       $chapter = "Grey Bruce";
@@ -287,13 +295,13 @@ Class CRM_ROCR_Import {
       $chapter = "North Bay";
       break;
     case 'Niagara':
-      $chapter = "Niagara Region";
+      $chapter = "Niagara";
       break;
-    case 'Sarnia Lambton':
-      $chapter = "Sarnia-Lambton";
+    case 'Sarnia-Lambton':
+      $chapter = "Sarnia Lambton";
       break;
     case 'Sault Ste Marie':
-      $chapter = "Sault Ste. Marie";
+      $chapter = "Sault St. Marie";
       break;
     case 'Simcoe':
       $chapter = "Simcoe County";
@@ -305,7 +313,7 @@ Class CRM_ROCR_Import {
       $chapter = "Upper Canada";
       break;
     case 'Wellington':
-      $chapter = "Wellington County";
+      $chapter = "Wellington";
       break;
     }
     return $chapter;
