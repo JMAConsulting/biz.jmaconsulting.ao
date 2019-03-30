@@ -1,0 +1,48 @@
+#: ./aoservicenav.php
+msgid "Second Parent/Guardian First Name (if applicable)"
+msgstr "Prénom du deuxième parent/tuteur, le cas échéant"
+
+#: ./aoservicenav.php
+msgid "Second Parent/Guardian Last Name (if applicable)"
+msgstr "Nom de famille du deuxième parent/tuteur, le cas échéant"
+
+#: ./aoservicenav.php
+msgid "Please add me to Autism Ontario’s news and event notification list"
+msgstr "SVP, m’ajouter à la liste d’envoi d’Autisme Ontario – Informations / Avis d’activités"
+
+#: ./aoservicenav.php
+msgid "Child's Diagnosis"
+msgstr "Diagnostic de l’enfant"
+
+#: ./aoservicenav.php
+msgid "Child's First Name"
+msgstr "Prénom de l'enfant"
+
+#: ./aoservicenav.php
+msgid "Child's Last Name"
+msgstr "Nom de famille de l’enfant"
+
+#: ./aoservicenav.php
+msgid "Child's Birth Date"
+msgstr "Date de naissance de l’enfant"
+
+#: ./aoservicenav.php
+msgid "Gender of Child with ASD?"
+msgstr "Sexe de l’enfant TSA?"
+
+#: ./aoservicenav.php
+msgid "Is your child registered with the Ontario Autism Program?"
+msgstr "Est-ce que votre enfant est inscrit au Programme ontarien des services en matière d’autisme? "
+
+#: ./aoservicenav.php
+msgid "%1 is a required field."
+msgstr "%1 est un champ obligatoire."
+
+#: ./aoservicenav.php
+msgid "This client does not have a lead family member. Please create one and try to save the Service Navigation Request."
+msgstr ""
+
+#: ./templates/CRM/ServiceNav.tpl
+msgid "Add another child"
+msgstr "Ajouter un autre enfant"
+
