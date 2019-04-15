@@ -242,6 +242,9 @@ function ao_civicrm_buildForm($formName, &$form) {
     );
   }
   if ($formName == 'CRM_Contribute_Form_Contribution') {
+    CRM_Core_Region::instance('page-body')->add(array(
+      'template' => 'CRM/AddBillingDetails.tpl',
+    ));
     $defaultProfileID = civicrm_api3('uf_group', 'getvalue', [
       'name' => 'new_individual',
       'is_active' => 1,
