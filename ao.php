@@ -199,7 +199,7 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 }
 
 function ao_civicrm_postSave_civicrm_membership($dao) {
-  civicrm_api3('CustomValue', 'create', array('entity_id' => $dao->id, 'custom_758' => getMemberID()));
+ // civicrm_api3('CustomValue', 'create', array('entity_id' => $dao->id, 'custom_758' => getMemberID()));
 }
 
 function ao_civicrm_buildForm($formName, &$form) {

@@ -11,10 +11,10 @@ select.crm-form-select {
   line-height: normal;
 }
 
-#off-canvas {
+/*#off-canvas {
   display: none;
-}
-     
+}*/
+
 #root-menu-div .menu-ul {
   margin-top: 60px;
 }
