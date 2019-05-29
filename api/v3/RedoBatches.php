@@ -46,7 +46,7 @@ function civicrm_api3_redo_batches_create($params) {
           LEFT JOIN civicrm_financial_trxn ft ON ft.id = eb.entity_id
           AND eb.batch_id = $dao->batch_id AND ft.card_type_id = 2
        ";
-       $dao = CRM_Core_DAO::executeQuery($sql);
+       CRM_Core_DAO::executeQuery($sql);
     }
 
 }
