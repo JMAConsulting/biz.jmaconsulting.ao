@@ -35,11 +35,20 @@ Class CRM_ROCR_Import {
           'title' => str_replace('Auto', 'Visa Auto', $dao->title),
         ]);
         CRM_Core_DAO::executeQuery("UPDATE civicrm_easybatch_entity SET card_type_id = 1 WHERE batch_id = " . $dao->batch_id);
-        $batchID = civicrm_api3('Batch', 'create', [
+
+        $params = [
           'title' => str_replace('Auto', 'MasterCard Auto', $dao->title),
           'status_id' => "Closed",
           'type_id' => "Contribution",
-        ])['id'];
+          'sequential' => 1,
+        ];
+        $result = civicrm_api3('Batch', 'get', $params);
+        if (!empty($result['count'])) {
+          $batchID = $result['values'][0]['id'];
+        }
+        else {
+          $batchID = civicrm_api3('Batch', 'create', $params)['id'];
+        }
 
         CRM_Core_DAO::executeQuery("INSERT INTO civicrm_easybatch_entity (`batch_id`, `contact_id`, `payment_processor_id`, `is_automatic`, `batch_date`, `card_type_id`)
          VALUES($batchID, 2,  $dao->payment_processor_id, 1, '" . date('Y-m-d H:i:s'). "', 2)");
