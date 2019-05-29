@@ -35,7 +35,7 @@ function civicrm_api3_redo_batches_create($params) {
         'title' => str_replace('Auto', 'MasterCard Auto', $dao->title),
         'status_id' => "Closed",
         'type_id' => "Contribution",
-      ]);
+      ])['id'];
 
       CRM_Core_DAO::executeQuery("INSERT INTO civicrm_easybatch_entity (`batch_id`, `contact_id`, `payment_processor_id`, `is_automatic`, `batch_date`, `card_type_id`)
        VALUES($batchID, $contactID,  $dao->payment_processor_id, 1, '" . date('Y-m-d H:i:s'). "', 2)");
