@@ -17,7 +17,7 @@
 function civicrm_api3_redo_batches_create($params) {
   $contactID = CRM_Core_Session::getLoggedInContactID();
   $sql = "
-    SELECT ee.batch_id, b.title_en_US, ee.payment_processor_id
+    SELECT ee.batch_id, b.title, ee.payment_processor_id
      FROM `civicrm_easybatch_entity` as ee
     LEFT JOIN civicrm_batch b ON ee.batch_id = b.id
     LEFT JOIN civicrm_entity_batch eb ON eb.batch_id = b.id
@@ -28,11 +28,11 @@ function civicrm_api3_redo_batches_create($params) {
     while($dao->fetch()) {
       civicrm_api3('Batch', 'create', [
         'id' => $dao->batch_id,
-        'title' => str_replace('Auto', 'Visa Auto', $dao->title_en_US),
+        'title' => str_replace('Auto', 'Visa Auto', $dao->title),
       ]);
       CRM_Core_DAO::executeQuery("UPDATE civicrm_easybatch_entity SET card_type_id = 1 WHERE batch_id = " . $dao->batch_id);
       $batchID = civicrm_api3('Batch', 'create', [
-        'title' => str_replace('Auto', 'MasterCard Auto', $dao->title_en_US),
+        'title' => str_replace('Auto', 'MasterCard Auto', $dao->title),
         'status_id' => "Closed",
         'type_id' => "Contribution",
       ]);
