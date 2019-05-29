@@ -40,7 +40,7 @@ function civicrm_api3_redo_batches_create($params) {
       CRM_Core_DAO::executeQuery("INSERT INTO civicrm_easybatch_entity (`batch_id`, `contact_id`, `payment_processor_id`, `is_automatic`, `batch_date`, `card_type_id`)
        VALUES($batchID, $contactID,  $dao->payment_processor_id, 1, '" . date('Y-m-d H:i:s'). "', 2)");
 
-       $sql = "INSERT IGNORE INTO civicrm_entity_batch ('entity_table', 'entity_id', 'batch_id')
+       $sql = "INSERT IGNORE INTO civicrm_entity_batch (`entity_table`, `entity_id`, `batch_id`)
          SELECT 'civicrm_financial_trxn', eb.entity_id, $batchID
           FROM civicrm_entity_batch eb
           LEFT JOIN civicrm_financial_trxn ft ON ft.id = eb.entity_id
