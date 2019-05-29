@@ -38,10 +38,11 @@ Class CRM_ROCR_Import {
         CRM_Core_DAO::executeQuery("UPDATE civicrm_easybatch_entity SET card_type_id = 1 WHERE batch_id = " . $dao->batch_id);
         */
         $sql = "
-        SELECT 'civicrm_financial_trxn', eb.entity_id, $batchID
+        SELECT eb.entity_id
          FROM civicrm_entity_batch eb
          INNER JOIN civicrm_financial_trxn ft ON ft.id = eb.entity_id
          AND eb.batch_id = $dao->batch_id AND ft.card_type_id = 2
+         GROUP BY eb.entity_id
         ";
         $d = CRM_Core_DAO::executeQuery($sql);
         if ($d->N > 1) {
