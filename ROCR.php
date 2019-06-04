@@ -21,22 +21,16 @@ Class CRM_ROCR_Import {
   function redoBatches() {
     $contactID = CRM_Core_Session::getLoggedInContactID();
     $sql = "
-      SELECT ee.batch_id, b.title, ee.payment_processor_id, b.created_date
+      SELECT ee.batch_id, b.title, ee.payment_processor_id, DATE(b.created_date) as created_date, ee.card_type_id
        FROM `civicrm_easybatch_entity` as ee
       LEFT JOIN civicrm_batch b ON ee.batch_id = b.id
       LEFT JOIN civicrm_entity_batch eb ON eb.batch_id = b.id
       LEFT JOIN civicrm_financial_trxn ft ON ft.id = eb.entity_id
-      WHERE ee.batch_date BETWEEN '2019-04-1' AND '2019-05-30' AND ee.payment_processor_id IS NOT NULL  AND ee.payment_processor_id = 3 GROUP BY ee.batch_id ";
+      WHERE ee.batch_date BETWEEN '2019-04-1' AND '2019-04-30' AND ee.payment_processor_id IS NOT NULL  AND ee.payment_processor_id = 3 GROUP BY ee.batch_id ";
       $dao = CRM_Core_DAO::executeQuery($sql);
 
       while($dao->fetch()) {
-        /**
-        civicrm_api3('Batch', 'create', [
-          'id' => $dao->batch_id,
-          'title' => str_replace('Auto', 'Visa Auto', $dao->title),
-        ]);
         CRM_Core_DAO::executeQuery("UPDATE civicrm_easybatch_entity SET card_type_id = 1 WHERE batch_id = " . $dao->batch_id);
-        */
         $sql = "
         SELECT eb.entity_id
          FROM civicrm_entity_batch eb
