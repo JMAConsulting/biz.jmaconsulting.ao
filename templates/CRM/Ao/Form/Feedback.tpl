@@ -1,7 +1,7 @@
 {* HEADER *}
 
 <div id="customData" class="crm-contribution-form-block-customData"></div>
-{include file="CRM/Custom/Form/Edit.tpl"}
+{include file="CRM/common/customDataBlock.tpl"}
 
 
 {* FOOTER *}
