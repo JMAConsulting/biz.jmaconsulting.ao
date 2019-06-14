@@ -422,6 +422,17 @@ function ao_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _ao_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
 
+function ao_civicrm_permission(&$permissions) {
+  $permissions += array(
+    'access CiviRefund' => array(
+      ts('process backoffice event refund', array('domain' => 'biz.jmaconsulting.ao')),
+      ts('process event refund', array('domain' => 'biz.jmaconsulting.ao')),
+      ts('process backoffice contribution refund', array('domain' => 'biz.jmaconsulting.ao')),
+      ts('process contribution refund', array('domain' => 'biz.jmaconsulting.ao')),
+    ),
+  );
+}
+
 /**
  * Functions below this ship commented out. Uncomment as required.
  *
@@ -430,9 +441,34 @@ function ao_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
  * Implements hook_civicrm_preProcess().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
+ */
 function ao_civicrm_preProcess($formName, &$form) {
-
+  $msg = NULL;
+  if ('CRM_Contribute_Form_AdditionalPayment' == $formName) {
+    if ($form->_paymentType == 'refund') {
+      if ($form->_component == 'event') {
+        if ($form->_mode) {
+          if (!CRM_Core_Permission::check('process event refund')) {
+            $msg = ts('You do not have permission to process refund for an event');
+          }
+        }
+        elseif (!CRM_Core_Permission::check('process backoffice event refund')) {
+          $msg = ts('You do not have permission to process backoffice refund for an event');
+        }
+      }
+      else {
+        if ($form->_mode) {
+          if (!CRM_Core_Permission::check('process contribution refund')) {
+            $msg = ts('You do not have permission to process refund');
+          }
+        }
+        elseif (!CRM_Core_Permission::check('process backoffice contribution refund')) {
+          $msg = ts('You do not have permission to process backoffice refund');
+        }
+      }
+    }
+    if ($msg) {
+      CRM_Core_Error::statusBounce($msg);
+    }
+  }
 }
-
-*/
