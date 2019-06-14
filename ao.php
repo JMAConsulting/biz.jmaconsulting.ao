@@ -424,10 +424,16 @@ function ao_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
 
 function ao_civicrm_permission(&$permissions) {
   $permissions += array(
-    'access CiviRefund' => array(
+    'process backoffice event refund' => array(
       ts('process backoffice event refund', array('domain' => 'biz.jmaconsulting.ao')),
+    ),
+    'process event refund' => array(
       ts('process event refund', array('domain' => 'biz.jmaconsulting.ao')),
+    ),
+    'process backoffice contribution refund' => array(
       ts('process backoffice contribution refund', array('domain' => 'biz.jmaconsulting.ao')),
+    ),
+    'process contribution refund' => array(
       ts('process contribution refund', array('domain' => 'biz.jmaconsulting.ao')),
     ),
   );
