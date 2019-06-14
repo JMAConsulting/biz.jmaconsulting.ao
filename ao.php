@@ -435,7 +435,7 @@ function ao_civicrm_permission(&$permissions) {
 
 /**
  * Functions below this ship commented out. Uncomment as required.
- *
+ */
 
 /**
  * Implements hook_civicrm_preProcess().
