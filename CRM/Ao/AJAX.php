@@ -61,4 +61,43 @@ public static function getParticipantList() {
   CRM_Utils_JSON::output($participantsDT);
 }
 
+public static function backofficeRefund() {
+  $params = $_GET;
+  $contributionID = $params['id'];
+  $contactID = $params['cid'];
+  $context = CRM_Utils_Array::value('cxt', $params, 'contribution');
+
+  $lineItems = civicrm_api3('LineItem', 'get', [
+    'contribution_id' => $contributionID,
+    'sequential' => 1,
+  ])['values'];
+  foreach ($lineItems as $lineItem) {
+    CRM_Lineitemedit_Util::cancelEntity($lineItem['entity_id'], $lineItem['entity_table']);
+    // change total_price and qty of current line item to 0, on cancel
+    civicrm_api3('LineItem', 'create', array(
+      'id' => $lineItem['id'],
+      'qty' => 0,
+      'participant_count' => 0,
+      'line_total' => 0.00,
+      'tax_amount' => 0.00,
+    ));
+
+    $updatedAmount = CRM_Price_BAO_LineItem::getLineTotal($contributionID);
+    $taxAmount = CRM_Lineitemedit_Util::getTaxAmountTotalFromContributionID($contributionID);
+    // Record adjusted amount by updating contribution info and create necessary financial trxns
+    CRM_Lineitemedit_Util::recordAdjustedAmt(
+      $updatedAmount,
+      $contributionID,
+      $taxAmount,
+      FALSE
+    );
+    // Record financial item on cancel of lineitem
+    CRM_Lineitemedit_Util::insertFinancialItemOnEdit(
+      $contributionID,
+      $lineItem
+    );
+  }
+  CRM_Utils_System::redirect('civicrm/payment', "reset=1&id={$contributionID}&cid={$contactID}&action=add&component={$context}");
+}
+
 }

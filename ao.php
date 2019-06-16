@@ -184,6 +184,17 @@ function ao_civicrm_links($op, $objectName, $objectId, &$links, &$mask, &$values
       }
     }
   }
+  elseif ($objectName == 'Contribution' && $op == 'contribution.selector.row') {
+    if (!in_array('civicrm/payment', CRM_Utils_Array::collect('url', $links))) {
+      $links[] = [
+        'name' => 'Record Refund',
+        'url' => 'civicrm/backoffice/refund',
+        'qs' => 'reset=1&id=%%id%%&cid=%%cid%%&action=add&component=%%cxt%%',
+        'title' => ts('Record Refund'),
+        'bit' => 1,
+      ];
+    }
+  }
 }
 
 function getMemberID() {

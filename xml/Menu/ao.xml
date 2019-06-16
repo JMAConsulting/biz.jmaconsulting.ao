@@ -18,6 +18,11 @@
     <access_arguments>access CiviCRM</access_arguments>
   </item>
   <item>
+    <path>civicrm/backoffice/refund</path>
+    <page_callback>CRM_Ao_AJAX::backofficeRefund</page_callback>
+    <access_arguments>access CiviCRM</access_arguments>
+  </item>
+  <item>
     <path>civicrm/feedback</path>
     <page_callback>CRM_Ao_Form_Feedback</page_callback>
     <title>Feedback</title>
