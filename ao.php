@@ -462,7 +462,7 @@ function ao_civicrm_permission(&$permissions) {
 function ao_civicrm_preProcess($formName, &$form) {
   $msg = NULL;
   if ('CRM_Contribute_Form_AdditionalPayment' == $formName) {
-    if ($form->_paymentType == 'refund') {
+    if ($form->get('_paymentType') == 'refund') {
       if ($form->_component == 'event') {
         if ($form->_mode) {
           if (!CRM_Core_Permission::check('process event refund')) {
