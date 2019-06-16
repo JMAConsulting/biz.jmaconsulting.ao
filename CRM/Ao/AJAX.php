@@ -97,7 +97,7 @@ public static function backofficeRefund() {
       $lineItem
     );
   }
-  CRM_Utils_System::redirect('civicrm/payment', "reset=1&id={$contributionID}&cid={$contactID}&action=add&component={$context}");
+  CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/payment', "reset=1&id={$contributionID}&cid={$contactID}&action=add&component={$context}"));
 }
 
 }
