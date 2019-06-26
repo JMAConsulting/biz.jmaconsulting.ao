@@ -61,6 +61,11 @@ public static function getParticipantList() {
   CRM_Utils_JSON::output($participantsDT);
 }
 
+public static function redirect($queue_id, $url_id) {
+  $url = CRM_Mailing_Event_BAO_TrackableURLOpen::track($queue_id, $url_id);
+  CRM_Utils_System::redirect($url);
+}
+
 public static function backofficeRefund() {
   $params = $_GET;
   $contributionID = $params['id'];
