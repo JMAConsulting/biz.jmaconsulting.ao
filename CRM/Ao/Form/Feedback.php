@@ -28,12 +28,14 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
   }
 
   public function buildQuickForm() {
-    CRM_Utils_System::setTitle(ts('Event Feedback Form'));
+    $values = civicrm_api3('Event', 'getsingle', ['id' => $this->_eventID]);
+
+    CRM_Utils_System::setTitle(ts('%1 Event Feedback Form', [1 => $values['event_title']]));
     $this->assign('customDataType', 'Activity');
     $this->assign('customDataSubType', ACTIVTY_TYPE_ID);
 
     $eventType = CRM_Utils_Array::value(
-      civicrm_api3('Event', 'getvalue', ['id' => $this->_eventID, 'return' => 'event_type_id']),
+      $values['event_type_id'],
       CRM_Core_OptionGroup::values('event_type', FALSE, FALSE, FALSE, NULL, 'name')
     );
     if (strstr($eventType, 'SLO ')) {
