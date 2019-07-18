@@ -450,6 +450,12 @@ function ao_civicrm_permission(&$permissions) {
   );
 }
 
+function ao_civicrm_alterAPIPermissions($entity, $action, &$params, &$permissions) {
+  if ($entity == 'contact' && $action == 'getlist' && CRM_Core_Permission::check('access AJAX API')) {
+    $permissions['check_permissions'] = FALSE;
+  }
+}
+
 /**
  * Functions below this ship commented out. Uncomment as required.
  */
