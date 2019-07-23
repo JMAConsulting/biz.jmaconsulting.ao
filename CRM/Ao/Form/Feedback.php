@@ -64,12 +64,12 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
   public function postProcess() {
     $params = [
       'subject' => ts('Feedback submitted by ') . CRM_Contact_BAO_Contact::displayName($this->_contactID),
-      'activity_type_id' => ACTIVTY_TYPE_ID,
+      'activity_type_id' => 55,
       'details' => ts('Event - %1', [
         1 => civicrm_api3('Event', 'getvalue', ['id' => $this->_eventID, 'return' => 'title']),
       ]),
       'source_record_id' => $this->_eventID,
-      'source_contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID(),
+      'source_contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID() ?: $this->_contactID,
       'target_contact_id' => [$this->_contactID],
     ];
     $this->_id = civicrm_api3('Activity', 'create', $params)['id'];
@@ -79,7 +79,12 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
       CRM_Core_BAO_CustomValueTable::store($customValues, 'civicrm_activity', $this->_id);
     }
 
-    CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activity', sprintf("atype=%d&action=view&reset=1&id=%d&cid=%d&context=activity&searchContext=activity", ACTIVTY_TYPE_ID, $this->_id, $this->_contactID)));
+    if (CRM_Core_Session::singleton()->getLoggedInContactID()) {
+      CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activity', sprintf("atype=%d&action=view&reset=1&id=%d&cid=%d&context=activity&searchContext=activity", ACTIVTY_TYPE_ID, $this->_id, $this->_contactID)));
+    }
+    else {
+      CRM_Utils_System::redirect('https://www.autismontario.com/feedback-submitted-successfully');
+    }
   }
 
 }
