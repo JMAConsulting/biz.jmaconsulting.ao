@@ -349,7 +349,7 @@ function ao_civicrm_postProcess($formName, &$form) {
   elseif(($formName == "CRM_Member_Form_Membership") && ($form->_action & CRM_Core_Action::ADD) && !empty($form->_id)) {
     civicrm_api3('CustomValue', 'create', array('entity_id' => $form->_id, 'custom_758' => getMemberID()));
   }
-  if ($formName == "CRM_Contribute_Form_Contribution_Confirm") {
+  /* if ($formName == "CRM_Contribute_Form_Contribution_Confirm") {
     if (!empty($form->_params['contributionRecurID'])) {
       $cid = CRM_Core_DAO::singleValueQuery("SELECT contact_id FROM civicrm_contribution_recur WHERE id = %1", [1 => [$form->_params['contributionRecurID'], "Integer"]]);
       if (empty($cid)) {
@@ -363,7 +363,7 @@ function ao_civicrm_postProcess($formName, &$form) {
         ));
       }
     }
-  }
+  } */
 }
 
 /**
