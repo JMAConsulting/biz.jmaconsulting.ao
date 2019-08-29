@@ -46,3 +46,6 @@ msgstr ""
 msgid "Add another child"
 msgstr "Ajouter un autre enfant"
 
+msgid "Register Now"
+msgstr "Inscrivez-vous dès maintenant"
+
