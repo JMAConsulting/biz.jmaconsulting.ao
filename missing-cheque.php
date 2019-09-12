@@ -19,23 +19,40 @@ Class CRM_Missing_Cheque {
   }
 
   function fixCheques() {
-    $sql = "SELECT data FROM `civicrm_batch` WHERE type_id = 1 AND MONTH(created_date) > 6 AND YEAR(created_date) = 2019 AND data LIKE '%payment_instrument\":\"7\"%'";
+    $sql = "SELECT id, data FROM `civicrm_batch` WHERE type_id = 1 AND MONTH(created_date) > 6 AND YEAR(created_date) = 2019 AND data LIKE '%payment_instrument\":\"7\"%'";
     $dao = CRM_Core_DAO::executeQuery($sql);
     $count = 0;
     while ($dao->fetch()) {
       $data = json_decode($dao->data, TRUE)['values'];
+
+      $sql = "SELECT GROUP_CONCAT(DISTINCT cc.id)
+        FROM `civicrm_batch` b
+        LEFT JOIN civicrm_entity_batch eb ON eb.batch_id = b.id AND eb.entity_table = 'civicrm_financial_trxn'
+        LEFT JOIN civicrm_entity_financial_trxn eft ON eft.financial_trxn_id = eb.entity_id AND eft.entity_table = 'civicrm_contribution'
+        LEFT JOIN civicrm_contribution cc ON cc.id = eft.entity_id AND cc.payment_instrument_id = 7
+       WHERE b.id = $dao->id AND cc.id IS NOT NULL
+       ";
+      $contributionIDs = explode(', ', CRM_Core_DAO::singleValueQuery($sql));
+
       foreach ($data['field'] as $key => $param) {
-        $contribution = civicrm_api3('Contribution', 'get', array_merge($param, [
+        $p = [
+          'financial_type' => $param['financial_type'],
+          'total_amount' => $param['total_amount'],
+          'payment_instrument_id' => 7,
           'contact_id' => $data['primary_contact_id'][$key],
           'sequential' => 1,
-        ]))['values'];
-        if (!empty($contribution[0] && !empty($contribution[0]['id']))) {
-          print_r($contribution[0]['id']);
-          civicrm_api3('Contribution', 'create', [
-            'id' => $contribution[0]['id'],
-            'check_number' => $param['contribution_check_number'],
-          ]);
-          $count++;
+        ];
+        $contributions = civicrm_api3('Contribution', 'get', $p)['values'];
+        print_r($contributionIDs);
+        foreach ($contributions as $contribution) {
+          if (in_array($contribution['id'], $contributionIDs)) {
+            $p = [
+              'id' => $contribution['id'],
+              'check_number' => $param['contribution_check_number'],
+            ];
+            civicrm_api3('Contribution', 'create', $p);
+            $count++;
+          }
         }
       }
     }
