@@ -103,6 +103,11 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
         $errors[SCHOOL] = ts('Please specify one of School options');
       }
     }
+    if (!empty($fields[CURRENT_NEEDS]['OAP'])) {
+      if(count(array_filter($fields[OAP])) == 0) {
+        $errors[OAP] = ts('Please specify one of OAP options');
+      }
+    }
     if (empty($fields['target_contact_id'])) {
       $errors['target_contact_id'] = ts('With Contact is a required field.');
     }

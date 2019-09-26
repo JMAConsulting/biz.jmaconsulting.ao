@@ -22,6 +22,9 @@ CRM.$(function($) {
       var school = 'custom_332_-1_School';
       var schooloptions = 'custom_335_-1-row';
 
+      var oap = 'custom_332_-1_OAP';
+      var oapoptions = 'custom_819_-1-row';
+
       // Adult Needs
       if ($('#'+adult).is(':checked')) {
         $('tr.'+adultoptions).show();
@@ -64,6 +67,21 @@ CRM.$(function($) {
 
         if(!$(this).is(':checked')) {
           $('tr.'+schooloptions).find('input[type=checkbox]:checked').removeAttr('checked');
+        }
+      });
+
+      // OAP
+      if ($('#'+oap).is(':checked')) {
+        $('tr.'+oapoptions).show();
+      }
+      else {
+        $('tr.'+oapoptions).hide();
+      }
+      $('#'+oap).click(function () {
+        $('tr.'+oapoptions).toggle();
+
+        if(!$(this).is(':checked')) {
+          $('tr.'+oapoptions).find('input[type=checkbox]:checked').removeAttr('checked');
         }
       });
     }
