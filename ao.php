@@ -67,6 +67,9 @@ function ao_civicrm_uninstall() {
 
 function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   if ($formName == "CRM_Activity_Form_Activity" && (in_array($form->_action, [CRM_Core_Action::ADD, CRM_Core_Action::UPDATE]))) {
+    if ($form->_action == CRM_Core_Action::UPDATE) {
+      $fields['activity_type_id'] = $form->_activityTypeId;
+    }
     if ($fields['activity_type_id'] == 70) {
       $sourceContact = $fields['source_contact_id'];
       $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
@@ -85,14 +88,14 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
         }
       }
       if (!$relationship['count'] || !$isActive) {
-        $errors['source_contact_id'] = ts('This contact does not active an active Parent relationship');
+        $errors['source_contact_id'] = ts('This contact does not have an active Parent relationship');
       }
     }
-    if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
+    /* if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
       if(count(array_filter($fields[ADULT_NEEDS])) == 0) {
         $errors[ADULT_NEEDS] = ts('Please specify one of Adult Needs options');
       }
-    }
+    } */
     if (!empty($fields[CURRENT_NEEDS]['AOinfo'])) {
       if(count(array_filter($fields[AO_INFO])) == 0) {
         $errors[AO_INFO] = ts('Please specify one of AO info options');

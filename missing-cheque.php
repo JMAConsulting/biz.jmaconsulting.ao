@@ -32,7 +32,7 @@ Class CRM_Missing_Cheque {
         LEFT JOIN civicrm_contribution cc ON cc.id = eft.entity_id AND cc.payment_instrument_id = 7
        WHERE b.id = $dao->id AND cc.id IS NOT NULL
        ";
-      $contributionIDs = explode(', ', CRM_Core_DAO::singleValueQuery($sql));
+      $contributionIDs = explode(',', CRM_Core_DAO::singleValueQuery($sql));
 
       foreach ($data['field'] as $key => $param) {
         $p = [
@@ -50,6 +50,7 @@ Class CRM_Missing_Cheque {
               'id' => $contribution['id'],
               'check_number' => $param['contribution_check_number'],
             ];
+print_r($p);
             civicrm_api3('Contribution', 'create', $p);
             $count++;
           }
@@ -61,6 +62,7 @@ Class CRM_Missing_Cheque {
 
 }
 
-$import = new CRM_ROCR_Import();
+//$import = new CRM_ROCR_Import();
+$import = new CRM_Missing_Cheque();
 //$import->rocrImport();
 $import->fixCheques();
