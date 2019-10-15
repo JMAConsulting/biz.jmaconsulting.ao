@@ -62,7 +62,6 @@ print_r($p);
 
 }
 
-//$import = new CRM_ROCR_Import();
 $import = new CRM_Missing_Cheque();
 //$import->rocrImport();
 $import->fixCheques();
