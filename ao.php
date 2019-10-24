@@ -71,10 +71,10 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
       $fields['activity_type_id'] = $form->_activityTypeId;
     }
     if ($fields['activity_type_id'] == 70) {
-      $sourceContact = $fields['source_contact_id'];
+      $withContact = $fields['target_contact_id'];
       $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
       $relationship = civicrm_api3('Relationship', 'get', [
-        'contact_id_b' => $sourceContact,
+        'contact_id_b' => $withContact,
         'relationship_type_id' => $relTypeId,
         'return' => ['is_active'],
       ]);
@@ -88,7 +88,7 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
         }
       }
       if (!$relationship['count'] || !$isActive) {
-        $errors['source_contact_id'] = ts('This contact does not have an active Parent relationship');
+        $errors['target_contact_id'] = ts('This contact does not have an active Parent relationship');
       }
     }
     /* if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
@@ -214,6 +214,10 @@ function getMemberID() {
 function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   if ($objectName == "Membership" && $op == "create") {
     civicrm_api3('CustomValue', 'create', array('entity_id' => $objectId, 'custom_758' => getMemberID()));
+  }
+  elseif ($objectName == 'Mailing' && in_array($op, ['create', 'edit'])) {
+    $objectRef->body_html = str_replace('[show_link]', 'https://www.autismontario.com/civicrm/mailing/view?reset=1&id=' . $objectId, $objectRef->body_html);
+    $objectRef->save();
   }
 }
 

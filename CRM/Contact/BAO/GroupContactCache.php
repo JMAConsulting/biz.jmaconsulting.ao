@@ -577,7 +577,6 @@ WHERE  id IN ( $groupIDs )
     $contactQueries[] = [
       'select' => "SELECT $groupID as group_id, contact_id as contact_id",
       'from' => "
-SELECT $groupID as group_id, contact_id as $idName
 FROM   civicrm_group_contact
 WHERE  civicrm_group_contact.status = 'Added'
 AND  civicrm_group_contact.group_id = $groupID ",
