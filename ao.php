@@ -70,9 +70,9 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
     if ($form->_action == CRM_Core_Action::UPDATE) {
       $fields['activity_type_id'] = $form->_activityTypeId;
     }
-    if ($fields['activity_type_id'] == 70) {
-      $withContact = $fields['target_contact_id'];
-      $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
+    if (in_array($fields['activity_type_id'], [70, 137])) {
+      $assigneeContact = $fields['assignee_contact_id'];
+      /* $relTypeId = CRM_Core_DAO::getFieldValue('CRM_Contact_DAO_RelationshipType', 'Parent of', 'id', 'name_b_a');
       $relationship = civicrm_api3('Relationship', 'get', [
         'contact_id_b' => $withContact,
         'relationship_type_id' => $relTypeId,
@@ -86,9 +86,12 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
             break;
           }
         }
-      }
-      if (!$relationship['count'] || !$isActive) {
-        $errors['target_contact_id'] = ts('This contact does not have an active Parent relationship');
+      } */
+      if (!empty($assigneeContact ) {
+        $isAoEmail = CRM_Core_DAO::singleValueQuery("SELECT 1 FROM civicrm_email WHERE email LIKE '%@autismontario.com' AND contact_id = $assigneeContact LIMIT 1");
+        if (!$isAoEmail) {
+          $errors['assignee_contact_id'] = ts('The contact being assigned to this activity must be an AO staff member');
+        }
       }
     }
     /* if (!empty($fields[CURRENT_NEEDS]['AdultNeeds'])) {
