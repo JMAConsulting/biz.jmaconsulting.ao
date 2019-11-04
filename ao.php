@@ -87,7 +87,7 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
           }
         }
       } */
-      if (!empty($assigneeContact ) {
+      if (!empty($assigneeContact)) {
         $isAoEmail = CRM_Core_DAO::singleValueQuery("SELECT 1 FROM civicrm_email WHERE email LIKE '%@autismontario.com' AND contact_id = $assigneeContact LIMIT 1");
         if (!$isAoEmail) {
           $errors['assignee_contact_id'] = ts('The contact being assigned to this activity must be an AO staff member');
