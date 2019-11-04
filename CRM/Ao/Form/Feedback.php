@@ -32,7 +32,7 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
 
     CRM_Utils_System::setTitle(ts('%1 Event Feedback Form', [1 => $values['event_title']]));
     $this->assign('customDataType', 'Activity');
-    $this->assign('customDataSubType', ACTIVTY_TYPE_ID);
+    $this->assign('customDataSubType', FEEDBACK_ACTIVTY_TYPE_ID);
 
     $eventType = CRM_Utils_Array::value(
       $values['event_type_id'],
@@ -80,7 +80,7 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
     }
 
     if (CRM_Core_Session::singleton()->getLoggedInContactID()) {
-      CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activity', sprintf("atype=%d&action=view&reset=1&id=%d&cid=%d&context=activity&searchContext=activity", ACTIVTY_TYPE_ID, $this->_id, $this->_contactID)));
+      CRM_Utils_System::redirect(CRM_Utils_System::url('civicrm/activity', sprintf("atype=%d&action=view&reset=1&id=%d&cid=%d&context=activity&searchContext=activity", FEEDBACK_ACTIVTY_TYPE_ID, $this->_id, $this->_contactID)));
     }
     else {
       CRM_Utils_System::redirect('https://www.autismontario.com/feedback-submitted-successfully');
