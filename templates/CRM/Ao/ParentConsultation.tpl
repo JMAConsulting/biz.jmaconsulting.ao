@@ -6,12 +6,12 @@ CRM.$(function($) {
     var txt = 'civicrm/custom';
     if(str.indexOf(txt) > -1) {
       // Contrast Ratios
-      $('a').css('color', '#464354');
-      $('a:link:hover').css('color', '#464354');
-      $('a:link').css('color', '#464354');
-      $('.description').css('color', '#555044');
-      $('input').css('border-color', '#464354');
-      $('.select2-search input, .select2-search, .select2-results, .select2-results__option--highlighted, .select2-results__option[aria-selected=true], .select2-result-label').css('color', '#464354');
+      $('.crm-activity-form-block').find('a').css('color', '#464354');
+      $('.crm-activity-form-block').find('a:link:hover').css('color', '#464354');
+      $('.crm-activity-form-block').find('a:link').css('color', '#464354');
+      $('.crm-activity-form-block').find('.description').css('color', '#555044');
+      $('.crm-activity-form-block').find('input').css('border-color', '#464354');
+      $('.crm-activity-form-block').find('.select2-search input, .select2-search, .select2-results, .select2-results__option--highlighted, .select2-results__option[aria-selected=true], .select2-result-label').css('color', '#464354');
 
       var adult = 'custom_332_-1_AdultNeeds';
       var adultoptions = 'custom_333_-1-row';
@@ -32,11 +32,13 @@ CRM.$(function($) {
       else {
         $('tr.'+adultoptions).hide();
       }
-      $('#'+adult).click(function (e) {
-        $('tr.'+adultoptions).toggle();
-
+      $('#'+adult).change(function (e) {
         if(!$(this).is(':checked')) {
+          $('tr.'+adultoptions).hide();
           $('tr.'+adultoptions).find('input[type=checkbox]:checked').removeAttr('checked');
+        }
+        else {
+          $('tr.'+adultoptions).show();
         }
       });
 
@@ -47,11 +49,14 @@ CRM.$(function($) {
       else {
         $('tr.'+aoinfooptions).hide();
       }
-      $('#'+aoinfo).click(function () {
-        $('tr.'+aoinfooptions).toggle();
+      $('#'+aoinfo).change(function () {
 
         if(!$(this).is(':checked')) {
+          $('tr.'+aoinfooptions).hide();
           $('tr.'+aoinfooptions).find('input[type=checkbox]:checked').removeAttr('checked');
+        }
+        else {
+          $('tr.'+aoinfooptions).show();
         }
       });
 
@@ -62,11 +67,14 @@ CRM.$(function($) {
       else {
         $('tr.'+schooloptions).hide();
       }
-      $('#'+school).click(function () {
-        $('tr.'+schooloptions).toggle();
+      $('#'+school).change(function () {
 
         if(!$(this).is(':checked')) {
+          $('tr.'+schooloptions).hide();
           $('tr.'+schooloptions).find('input[type=checkbox]:checked').removeAttr('checked');
+        }
+        else {
+          $('tr.'+schooloptions).show();
         }
       });
 
@@ -77,11 +85,14 @@ CRM.$(function($) {
       else {
         $('tr.'+oapoptions).hide();
       }
-      $('#'+oap).click(function () {
-        $('tr.'+oapoptions).toggle();
+      $('#'+oap).change(function () {
 
         if(!$(this).is(':checked')) {
+          $('tr.'+oapoptions).hide();
           $('tr.'+oapoptions).find('input[type=checkbox]:checked').removeAttr('checked');
+        }
+        else {
+          $('tr.'+oapoptions).show();
         }
       });
     }
