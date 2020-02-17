@@ -3,6 +3,8 @@
 require_once 'ao.variables.php';
 require_once 'ao.civix.php';
 
+use CRM_Ao_ExtensionUtil as E;
+
 /**
  * Implements hook_civicrm_config().
  *
@@ -117,6 +119,9 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
     if (empty($fields['target_contact_id'])) {
       $errors['target_contact_id'] = ts('With Contact is a required field.');
     }
+  }
+  if (!empty($fields['birth_date']) && $fields['birth_date'] > date('Y-m-d')) {
+    $errors['birth_date'] = E::ts('Date of birth cannot be in the future');
   }
 }
 
