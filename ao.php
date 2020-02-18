@@ -239,6 +239,11 @@ function ao_civicrm_postSave_civicrm_membership($dao) {
 }
 
 function ao_civicrm_buildForm($formName, &$form) {
+  // AOS-439 : expose 'Address Name' field on 'Event Location' config page
+  if ($formName == 'CRM_Event_Form_ManageEvent_Location') {
+    $params = ['entity' => 'address'];
+    $form->addField("address[1][name]", $params);
+  }
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     CRM_Core_Resources::singleton()->addScript(
       "CRM.$(function($) {
