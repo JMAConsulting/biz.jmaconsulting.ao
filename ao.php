@@ -152,6 +152,11 @@ function ao_civicrm_pageRun(&$page) {
     });
     ", -100, 'html-header');
   }
+  if ($page->getVar('_name') == 'CRM_Activity_Page_Tab') {
+    CRM_Core_Region::instance('page-header')->add([
+      'template' => 'CRM/Activity/Page/activityButton.tpl',
+    ]);
+  }
 }
 
 function ao_civicrm_alterReportVar($type, &$columns, &$form) {
