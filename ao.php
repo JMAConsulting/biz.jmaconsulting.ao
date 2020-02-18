@@ -526,6 +526,44 @@ function ao_civicrm_alterAPIPermissions($entity, $action, &$params, &$permission
 }
 
 /**
+ * Implements hook_civicrm_pre().
+ *
+ * AOS-64 Ensure that all postcodes are formatted in the format of xxx yyy
+ */
+function ao_civicrm_pre($op, $objectName, $id, &$params) {
+  $update = TRUE;
+  if ($objectName === 'Address' && ($op === 'create' || $op === 'edit')) {
+    if ($id) {
+      if (!empty($params['postal_code'])) {
+        $postalCode = str_replace(' ', '', $params['postal_code']);
+        $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+        if ($postalCode == $address['postal_code']) {
+          $update = FALSE;
+        }
+      }
+      else {
+        $address = civicrm_api3('Address', 'getsingle', ['id' => $id]);
+        $postalCode = str_replace(' ', '', $address['postal_code']);
+        $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+        if ($postalCode == $address['postal_code']) {
+          $update = FALSE;
+        }
+      }
+    }
+    elseif (!empty($params['postal_code'])) {
+      $postalCode = str_replace(' ', '', $params['postal_code']);
+      $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+      if ($postalCode == $address['postal_code']) {
+        $update = FALSE;
+      }
+    }
+    if ($update) {
+      $params['postal_code'] = $postalCode;
+    }
+  }
+}
+
+/**
  * Functions below this ship commented out. Uncomment as required.
  */
 
