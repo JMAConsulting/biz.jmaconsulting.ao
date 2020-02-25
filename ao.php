@@ -263,6 +263,25 @@ function ao_civicrm_buildForm($formName, &$form) {
         });
       });"
     );
+    if (CRM_Core_I18n::getLocale() == "fr_CA") {
+      CRM_Core_Resources::singleton()->addScript(
+        "CRM.$(function($) {
+          if ($('#auto_renew').length !== -1) {
+            $('#auto_renew').next('label').text('Veuillez renouveler automatiquement mon adhésion.');
+          }
+          if ($('[name=price_21]').length !== -1) {
+            var label = $('[name=price_21]').next('label').html();
+            label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
+            $('[name=price_21]').next('label').html(label);
+          }
+          if ($('[name=price_19]').length !== -1) {
+            var label = $('[name=price_19]').next('label').html();
+            label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
+            $('[name=price_19]').next('label').html(label);
+          }
+        });"
+      );
+    }
   }
   if ($formName == 'CRM_Contribute_Form_ContributionView' && ($contributionID = CRM_Utils_Array::value('id', $_GET))) {
     return;
