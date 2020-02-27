@@ -279,6 +279,11 @@ function ao_civicrm_buildForm($formName, &$form) {
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_19]').next('label').html(label);
           }
+          if ($('[name=price_17]').length !== -1) {
+            var label = $('[name=price_17]').next('label').html();
+            label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
+            $('[name=price_17]').next('label').html(label);
+          }
         });"
       );
     }
