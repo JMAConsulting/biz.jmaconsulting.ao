@@ -232,6 +232,33 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
     $objectRef->body_html = str_replace('[show_link]', 'https://www.autismontario.com/civicrm/mailing/view?reset=1&id=' . $objectId, $objectRef->body_html);
     $objectRef->save();
   }
+  if ($objectName == "Address" && $op == "create") {
+    // Get appropriate entity ID for address
+    // Can be either contact ID or event ID
+    $object = "Event"; // Can be Contact as well, depending on if the field is stored in the contact entity
+    $entityId = 1327; // Event ID or Contact ID.
+    $entityType = SupportedEntities::getEntityType($object);
+
+    $storage = \Drupal::entityTypeManager()->getStorage($entityType);
+    $entity = $storage->load($entityId);
+    $lat = 19.2; // TODO: Derive lat
+    $lng = 72.85; // TODO: Derive long
+    $latSin = sin(deg2rad($lat));
+    $latCos = cos(deg2rad($lat));
+    $lngRad = deg2rad($lng);
+    $entity->get('field_geolocation')->setValue(array(
+      array(
+        'lat' => $lat,
+        'lng'=> $lng,
+        'lat_sin' => $latSin,
+        'lat_cos' => $latCos,
+        'lng_rad' => $lngRad,
+        'data' => '',
+        ),
+      )
+    );
+    $entity->save();
+  }
 }
 
 function ao_civicrm_postSave_civicrm_membership($dao) {
