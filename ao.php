@@ -4,6 +4,7 @@ require_once 'ao.variables.php';
 require_once 'ao.civix.php';
 
 use CRM_Ao_ExtensionUtil as E;
+use Drupal\civicrm_entity\SupportedEntities;
 
 /**
  * Implements hook_civicrm_config().
@@ -233,33 +234,53 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
     $objectRef->save();
   }
   if ($objectName == "Address" && $op == "create") {
-    // Get appropriate entity ID for address
-    // Can be either contact ID or event ID
-    $object = "Event"; // Can be Contact as well, depending on if the field is stored in the contact entity
-    $entityId = 1327; // Event ID or Contact ID.
-    $entityType = SupportedEntities::getEntityType($object);
+    $objectRef->find(TRUE);
+    if (empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
+      return;
+    }
+    list($entity, $entityID) = _getEntityInfo($objectId, $objectRef);
 
-    $storage = \Drupal::entityTypeManager()->getStorage($entityType);
-    $entity = $storage->load($entityId);
-    $lat = 19.2; // TODO: Derive lat
-    $lng = 72.85; // TODO: Derive long
-    $latSin = sin(deg2rad($lat));
-    $latCos = cos(deg2rad($lat));
-    $lngRad = deg2rad($lng);
-    $entity->get('field_geolocation')->setValue(array(
-      array(
-        'lat' => $lat,
-        'lng'=> $lng,
-        'lat_sin' => $latSin,
-        'lat_cos' => $latCos,
-        'lng_rad' => $lngRad,
-        'data' => '',
-        ),
-      )
-    );
-    $entity->save();
+    if ($entityID) {
+      $entityType = SupportedEntities::getEntityType($entity);
+      $storage = \Drupal::entityTypeManager()->getStorage($entityType);
+      $entity = $storage->load($entityID);
+      $params = [
+        'lat' => $objectRef->geo_code_1,
+        'lng'=> $objectRef->geo_code_2,
+        'lat_sin' => sin(deg2rad($objectRef->geo_code_1)),
+        'lat_cos' => cos(deg2rad($objectRef->geo_code_1)),
+        'lng_rad' => deg2rad($objectRef->geo_code_2),
+      ];
+      $params['data'] = serialize($params);
+      $entity->get('field_geolocation')->setValue(array($params));
+      $entity->save();
+    }
   }
 }
+
+function _getEntityInfo($address) {
+  $result = civicrm_api3('LocBlock', 'get', [
+    'address_id' => $address->id,
+  ]);
+  if (!empty($result['count'])) {
+    $eventID = civicrm_api3('Event', 'get', [
+      'loc_block_id' => $result['id'],
+    ])['id'];
+    return ['Event', $eventID];
+  }
+  elseif (!empty($address->is_primary)) {
+    $contactID = civicrm_api3('Contact', 'get', [
+      'contact_sub_type' => 'service_provider',
+      'id' => $address->contact_id,
+    ])['id'];
+    if ($contactID) {
+      return ['Contact', $contactID];
+    }
+  }
+
+  return [NULL, NULL];
+}
+
 
 function ao_civicrm_postSave_civicrm_membership($dao) {
  // civicrm_api3('CustomValue', 'create', array('entity_id' => $dao->id, 'custom_758' => getMemberID()));
