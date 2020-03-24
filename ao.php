@@ -245,8 +245,8 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
       $storage = \Drupal::entityTypeManager()->getStorage($entityType);
       $entity = $storage->load($entityID);
       $geofieldData = [
-        'lat' => $objectRef->geo_code_1,
         'lon' => $objectRef->geo_code_2,
+        'lat' => $objectRef->geo_code_1,
       ];
       $value = \Drupal::service('geofield.wkt_generator')->WktBuildPoint($geofieldData);
       $entity->get('field_geofield')->setValue($value);
