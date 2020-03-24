@@ -244,15 +244,12 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
       $entityType = SupportedEntities::getEntityType($entity);
       $storage = \Drupal::entityTypeManager()->getStorage($entityType);
       $entity = $storage->load($entityID);
-      $params = [
+      $geofieldData = [
         'lat' => $objectRef->geo_code_1,
-        'lng'=> $objectRef->geo_code_2,
-        'lat_sin' => sin(deg2rad($objectRef->geo_code_1)),
-        'lat_cos' => cos(deg2rad($objectRef->geo_code_1)),
-        'lng_rad' => deg2rad($objectRef->geo_code_2),
+        'lon' => $objectRef->geo_code_2,
       ];
-      $params['data'] = serialize($params);
-      $entity->get('field_geolocation')->setValue(array($params));
+      $value = \Drupal::service('geofield.wkt_generator')->WktBuildPoint($geofieldData);
+      $entity->get('field_geofield')->setValue($value);
       $entity->save();
     }
   }
