@@ -233,7 +233,7 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
     $objectRef->body_html = str_replace('[show_link]', 'https://www.autismontario.com/civicrm/mailing/view?reset=1&id=' . $objectId, $objectRef->body_html);
     $objectRef->save();
   }
-  if ($objectName == "Address" && $op == "create") {
+  if ($objectName == "Address" && $op != "delete") {
     $objectRef->find(TRUE);
     if (empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
       return;
@@ -244,12 +244,16 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
       $entityType = SupportedEntities::getEntityType($entity);
       $storage = \Drupal::entityTypeManager()->getStorage($entityType);
       $entity = $storage->load($entityID);
-      $geofieldData = [
-        'lon' => $objectRef->geo_code_2,
+      $params = [
         'lat' => $objectRef->geo_code_1,
+        'lng'=> $objectRef->geo_code_2,
+        'lat_sin' => sin(deg2rad($objectRef->geo_code_1)),
+        'lat_cos' => cos(deg2rad($objectRef->geo_code_1)),
+        'lng_rad' => deg2rad($objectRef->geo_code_2),
       ];
-      $value = \Drupal::service('geofield.wkt_generator')->WktBuildPoint($geofieldData);
-      $entity->get('field_geofield')->setValue($value);
+      $params['data'] = serialize($params);
+      $entity->get('field_geolocation')->setValue(array($params));
+      $entity->get('field_mapped_location')->setValue(1);
       $entity->save();
     }
   }
