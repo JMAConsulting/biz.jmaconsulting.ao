@@ -235,51 +235,32 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   }
   if ($objectName == "Address" && $op != "delete") {
     $objectRef->find(TRUE);
-    if (empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
+    if (empty($objectRef->contact_id) || empty($objectRef->is_primary) || empty($objectRef->geo_code_1 || empty($objectRef->geo_code_2)) {
       return;
     }
-    list($entity, $entityID) = _getEntityInfo($objectId, $objectRef);
+    $entityID = CRM_Core_DAO::singlevalueQuery("SELECT id FROM civicrm_contact WHERE contact_sub_type LIKE '%service_provider%' AND id = " . $objectRef->contact_id);
 
     if ($entityID) {
-      $entityType = SupportedEntities::getEntityType($entity);
-      $storage = \Drupal::entityTypeManager()->getStorage($entityType);
-      $entity = $storage->load($entityID);
-      $params = [
-        'lat' => $objectRef->geo_code_1,
-        'lng'=> $objectRef->geo_code_2,
-        'lat_sin' => sin(deg2rad($objectRef->geo_code_1)),
-        'lat_cos' => cos(deg2rad($objectRef->geo_code_1)),
-        'lng_rad' => deg2rad($objectRef->geo_code_2),
-      ];
-      $params['data'] = serialize($params);
-      $entity->get('field_geolocation')->setValue(array($params));
-      $entity->get('field_mapped_location')->setValue(1);
-      $entity->save();
+      _entitySave($objectRef, $entityID, 'Contact');
     }
   }
 }
 
-function _getEntityInfo($address) {
-  $result = civicrm_api3('LocBlock', 'get', [
-    'address_id' => $address->id,
-  ]);
-  if (!empty($result['count'])) {
-    $eventID = civicrm_api3('Event', 'get', [
-      'loc_block_id' => $result['id'],
-    ])['id'];
-    return ['Event', $eventID];
-  }
-  elseif (!empty($address->is_primary)) {
-    $contactID = civicrm_api3('Contact', 'get', [
-      'contact_sub_type' => 'service_provider',
-      'id' => $address->contact_id,
-    ])['id'];
-    if ($contactID) {
-      return ['Contact', $contactID];
-    }
-  }
-
-  return [NULL, NULL];
+function _entitySave($address, $entityID, $entity) {
+  $entityType = SupportedEntities::getEntityType($entity);
+  $key = ($entity == 'Contact') ? 'field_mapped_location_1' : 'field_mapped_location';
+  $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entity))->load($entityID);
+  $params = [
+    'lat' => $address->geo_code_1,
+    'lng'=> $address->geo_code_2,
+    'lat_sin' => sin(deg2rad($address->geo_code_1)),
+    'lat_cos' => cos(deg2rad($address->geo_code_1)),
+    'lng_rad' => deg2rad($address->geo_code_2),
+  ];
+  $params['data'] = $params;
+  $entity->get('field_geolocation')->setValue(array($params));
+  $entity->get($key)->setValue(1);
+  $entity->save();
 }
 
 
@@ -481,6 +462,23 @@ function ao_civicrm_postProcess($formName, &$form) {
   }
   elseif(($formName == "CRM_Member_Form_Membership") && ($form->_action & CRM_Core_Action::ADD) && !empty($form->_id)) {
     civicrm_api3('CustomValue', 'create', array('entity_id' => $form->_id, 'custom_758' => getMemberID()));
+  }
+  elseif($formName == 'CRM_Event_Form_ManageEvent_Location' && !empty($form->_id)) {
+    $addressID = CRM_Core_DAO::singlevalueQuery("
+      SELECT a.id
+        FROM civicrm_event e
+         INNER JOIN civicrm_loc_block lb ON lb.id = e.loc_block_id
+         INNER JOIN  civicrm_address a ON a.id = lb.address_id
+      WHERE e.id = {$form->_id}
+    ");
+    if (!empty($addressID)) {
+      $address = new CRM_Core_BAO_Address();
+      $address->id = $addressID;
+      $address->find(TRUE);
+      if (!empty($address->geo_code_1) && !empty($address->geo_code_2)) {
+        _entitySave($address, $form->_id, 'Event');
+      }
+    }
   }
   /* if ($formName == "CRM_Contribute_Form_Contribution_Confirm") {
     if (!empty($form->_params['contributionRecurID'])) {
