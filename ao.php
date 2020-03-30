@@ -315,23 +315,25 @@ function ao_civicrm_buildForm($formName, &$form) {
     if (CRM_Core_I18n::getLocale() == "fr_CA") {
       CRM_Core_Resources::singleton()->addScript(
         "CRM.$(function($) {
+          var intFormat = new Intl.NumberFormat('fr-CA', {style: 'currency', currency: 'CAD', currencyDisplay: 'symbol'});
           if ($('#auto_renew').length !== -1) {
             $('#auto_renew').next('label').text('Veuillez renouveler automatiquement mon adhésion.');
           }
+          var amount = $('.crm-price-amount-amount').text().replace('$ ', '').trim();
           if ($('[name=price_21]').length !== -1) {
-            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
+            $('.crm-price-amount-amount').text(intFormat.format(amount));
             var label = $('[name=price_21]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_21]').next('label').html(label);
           }
           if ($('[name=price_19]').length !== -1) {
-            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
+            $('.crm-price-amount-amount').text(intFormat.format(amount));
             var label = $('[name=price_19]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_19]').next('label').html(label);
           }
           if ($('[name=price_17]').length !== -1) {
-            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
+            $('.crm-price-amount-amount').text(intFormat.format(amount));
             var label = $('[name=price_17]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_17]').next('label').html(label);
