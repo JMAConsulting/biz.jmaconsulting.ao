@@ -319,16 +319,19 @@ function ao_civicrm_buildForm($formName, &$form) {
             $('#auto_renew').next('label').text('Veuillez renouveler automatiquement mon adhésion.');
           }
           if ($('[name=price_21]').length !== -1) {
+            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
             var label = $('[name=price_21]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_21]').next('label').html(label);
           }
           if ($('[name=price_19]').length !== -1) {
+            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
             var label = $('[name=price_19]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_19]').next('label').html(label);
           }
           if ($('[name=price_17]').length !== -1) {
+            $('.crm-price-amount-amount').text().replace('$ ', '').replace(',',',,').replace('.',',').replace(',,','.') + ' $';
             var label = $('[name=price_17]').next('label').html();
             label = label + ' <span class=\"crm-price-amount-label\">par année</span>';
             $('[name=price_17]').next('label').html(label);
