@@ -342,6 +342,18 @@ function ao_civicrm_buildForm($formName, &$form) {
       );
     }
   }
+  $membershipPages = [4, 5, 6];
+  if ($formName == 'CRM_Contribute_Form_Contribution_Confirm' && CRM_Core_I18n::getLocale() == "fr_CA" && in_array($form->_id, $membershipPages)) {
+    CRM_Core_Resources::singleton()->addScript(
+      "CRM.$(function($) {
+        var intFormat = new Intl.NumberFormat('fr-CA', {style: 'currency', currency: 'CAD', currencyDisplay: 'symbol'});
+        var amount = $('.amount_display-group strong').text().replace('$ ', '').trim();
+        $('.amount_display-group strong').text(intFormat.format(amount));
+        label = $('.amount_display-group .display-block').html();
+        $('.amount_display-group .display-block').html(label + ' par année');
+      });"
+    );
+  }
   if ($formName == 'CRM_Contribute_Form_ContributionView' && ($contributionID = CRM_Utils_Array::value('id', $_GET))) {
     return;
     $string = '&nbsp;&nbsp;&nbsp;&nbsp;';
