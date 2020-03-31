@@ -2,6 +2,9 @@
 
 
 require_once __DIR__ . '/ao.variables.php';
+require_once 'ao.civix.php';
+
+use CRM_Ao_ExtensionUtil as E;
 
 /**
  * Form controller class
@@ -30,7 +33,7 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
   public function buildQuickForm() {
     $values = civicrm_api3('Event', 'getsingle', ['id' => $this->_eventID]);
 
-    CRM_Utils_System::setTitle(ts('%1 Event Feedback Form', [1 => $values['event_title']]));
+    CRM_Utils_System::setTitle(E::ts('%1 Event Feedback Form', [1 => $values['event_title']]));
     $this->assign('customDataType', 'Activity');
     $this->assign('customDataSubType', FEEDBACK_ACTIVTY_TYPE_ID);
 
