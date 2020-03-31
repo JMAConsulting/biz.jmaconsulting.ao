@@ -49,3 +49,6 @@ msgstr "Ajouter un autre enfant"
 msgid "Register Now"
 msgstr "Inscrivez-vous dès maintenant"
 
+#: CRM/Ao/Form/Feedback.php
+msgid "%1 Event Feedback Form"
+msgstr "%1 Formulaire d’évaluation d’activités"
