@@ -653,6 +653,9 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
     if (array_key_exists('address', $params)) {
       foreach ($params['address'] as $key => $v) {
         $params['address'][$key]['skip_auto_create'] = 1;
+        $params['address'][$key][ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+        $source = substr($params['entryURL', 'contribute') !== FALSE ? 'Online Contribution' : 'Online Event Registration';
+        $params['address'][$key][ADDRESS_SOURCE] = $source;
       }
     }
   }
