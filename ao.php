@@ -647,11 +647,23 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
       $params['postal_code'] = $postalCode;
     }
   }
-}
 
-/**
- * Functions below this ship commented out. Uncomment as required.
- */
+  // If we have an entryURL we have come in via either a Contribution Form or an Event Registration Form
+  if ($objectName === 'Individual' && array_key_exists('entryURL', $params)) {
+    if (array_key_exists('address', $params)) {
+      foreach ($params['address'] as $key => $v) {
+        $params['address'][$key]['skip_auto_create'] = 1;
+      }
+    }
+  }
+  // skip_auto_create will only be set if we have come from a public form.
+  if ($objectName === 'Address' && !empty($params['skip_auto_create']) && array_key_exists('id', $params)) {
+    // Remove id so we force create a new address.
+    unset($params['id']);
+    // Ensure that the new address isn't primary
+    $params['is_primary'] = 0;
+  }
+}
 
 /**
  * Implements hook_civicrm_preProcess().
