@@ -654,17 +654,37 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
       foreach ($params['address'] as $key => $v) {
         $params['address'][$key]['skip_auto_create'] = 1;
         $params['address'][$key][ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
-        $source = substr($params['entryURL', 'contribute') !== FALSE ? 'Online Contribution' : 'Online Event Registration';
-        $params['address'][$key][ADDRESS_SOURCE] = $source;
+        $params['address'][$key][ADDRESS_SOURCE] = 'Front end form';
       }
     }
   }
   // skip_auto_create will only be set if we have come from a public form.
-  if ($objectName === 'Address' && !empty($params['skip_auto_create']) && array_key_exists('id', $params)) {
-    // Remove id so we force create a new address.
-    unset($params['id']);
-    // Ensure that the new address isn't primary
-    $params['is_primary'] = 0;
+  if ($objectName === 'Address' && array_key_exists('id', $params)) {
+    if (!empty($params['skip_auto_create'])) {
+      // Remove id so we force create a new address.
+      unset($params['id']);
+      // Ensure that the new address isn't primary
+      $params['is_primary'] = 0;
+    }
+    $currentAddress = civicrm_api3('Address', 'get', ['id' => $params['id']]);
+    if (!empty($currentAddress['values'])) {
+      $currentAddress = $currentAddress['values'][$currentAddress['id']];
+      if ($params['street_address'] != $currentAddress['street_address'] || $params['city'] != $currentAddress['city']
+        || $params['postal_code'] != $currentAddress['postal_code'] || $params['state_province_id'] != $currentAddress['state_province_id']) {
+        if (empty($params['skip_auto_create'])) {
+          $params[ADDRESS_SOURCE] = 'Backoffice form';
+        }
+        $params[ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+      }
+    }
+  }
+  elseif ($objectName === 'Address') {
+    if (empty($params['address-name'])) {
+      if (empty($params['skip_auto_create'])) {
+        $params[ADDRESS_SOURCE] = 'Backoffice form';
+     }
+      $params[ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+    }
   }
 }
 
