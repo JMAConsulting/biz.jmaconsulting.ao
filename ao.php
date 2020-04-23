@@ -650,7 +650,7 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
 
   // If we have an entryURL we have come in via either a Contribution Form or an Event Registration Form
   if ($objectName === 'Individual' && array_key_exists('entryURL', $params)) {
-    if (array_key_exists('address', $params)) {
+    if (array_key_exists('address', $params) && (stripos($params['entryURL'], 'contribute') !== FALSE || stripos($params['entryURL'], 'register') !== FALSE)) {
       foreach ($params['address'] as $key => $v) {
         $params['address'][$key]['skip_auto_create'] = 1;
         $params['address'][$key][ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
