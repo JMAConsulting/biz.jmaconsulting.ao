@@ -605,6 +605,51 @@ function ao_civicrm_alterAPIPermissions($entity, $action, &$params, &$permission
 }
 
 /**
+ * Implements hook_civicrm_pre().
+ *
+ * AOS-64 Ensure that all postcodes are formatted in the format of xxx yyy
+ */
+function ao_civicrm_pre($op, $objectName, $id, &$params) {
+  $update = TRUE;
+  if ($objectName === 'Address' && ($op === 'create' || $op === 'edit')) {
+    if ($id) {
+      // If we have a postal code in the address parameters then reformat into the correct format
+      // To determine if the imput was already in the correct format
+      if (!empty($params['postal_code'])) {
+        $postalCode = str_replace(' ', '', $params['postal_code']);
+        $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+        if ($postalCode == $address['postal_code']) {
+          $update = FALSE;
+        }
+      }
+      else {
+        // If we have an id but don't have a postal code, this could be from an API call where
+        // Someone is just changing the is_primary flag pull the current postal code out of the database
+        // and reformat it into the expected format to see if the postcode in the db is already in the correct format.
+        $address = civicrm_api3('Address', 'getsingle', ['id' => $id]);
+        $postalCode = str_replace(' ', '', $address['postal_code']);
+        $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+        if ($postalCode == $address['postal_code']) {
+          $update = FALSE;
+        }
+      }
+    }
+    elseif (!empty($params['postal_code'])) {
+      // If we have a postal code in the address parameters then reformat into the correct format
+      // To determine if the imput was already in the correct format
+      $postalCode = str_replace(' ', '', $params['postal_code']);
+      $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
+      if ($postalCode == $address['postal_code']) {
+        $update = FALSE;
+      }
+    }
+    if ($update) {
+      $params['postal_code'] = $postalCode;
+    }
+  }
+}
+
+/**
  * Functions below this ship commented out. Uncomment as required.
  */
 
