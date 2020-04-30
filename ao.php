@@ -235,7 +235,7 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   }
   if ($objectName == "Address" && $op != "delete") {
     $objectRef->find(TRUE);
-    if (empty($objectRef->contact_id) || empty($objectRef->is_primary) || empty($objectRef->geo_code_1 || empty($objectRef->geo_code_2)) {
+    if (empty($objectRef->contact_id) || empty($objectRef->is_primary) || empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
       return;
     }
     $entityID = CRM_Core_DAO::singlevalueQuery("SELECT id FROM civicrm_contact WHERE contact_sub_type LIKE '%service_provider%' AND id = " . $objectRef->contact_id);
