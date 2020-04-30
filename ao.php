@@ -647,11 +647,46 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
       $params['postal_code'] = $postalCode;
     }
   }
-}
 
-/**
- * Functions below this ship commented out. Uncomment as required.
- */
+  // If we have an entryURL we have come in via either a Contribution Form or an Event Registration Form
+  if ($objectName === 'Individual' && array_key_exists('entryURL', $params)) {
+    if (array_key_exists('address', $params) && (stripos($params['entryURL'], 'contribute') !== FALSE || stripos($params['entryURL'], 'register') !== FALSE)) {
+      foreach ($params['address'] as $key => $v) {
+        $params['address'][$key]['skip_auto_create'] = 1;
+        $params['address'][$key][ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+        $params['address'][$key][ADDRESS_SOURCE] = 'Front end form';
+      }
+    }
+  }
+  // skip_auto_create will only be set if we have come from a public form.
+  if ($objectName === 'Address' && array_key_exists('id', $params)) {
+    if (!empty($params['skip_auto_create'])) {
+      // Remove id so we force create a new address.
+      unset($params['id']);
+      // Ensure that the new address isn't primary
+      $params['is_primary'] = 0;
+    }
+    $currentAddress = civicrm_api3('Address', 'get', ['id' => $params['id']]);
+    if (!empty($currentAddress['values'])) {
+      $currentAddress = $currentAddress['values'][$currentAddress['id']];
+      if ($params['street_address'] != $currentAddress['street_address'] || $params['city'] != $currentAddress['city']
+        || $params['postal_code'] != $currentAddress['postal_code'] || $params['state_province_id'] != $currentAddress['state_province_id']) {
+        if (empty($params['skip_auto_create'])) {
+          $params[ADDRESS_SOURCE] = 'Backoffice form';
+        }
+        $params[ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+      }
+    }
+  }
+  elseif ($objectName === 'Address') {
+    if (empty($params['address-name'])) {
+      if (empty($params['skip_auto_create'])) {
+        $params[ADDRESS_SOURCE] = 'Backoffice form';
+     }
+      $params[ADDRESS_CREATED_DATE] = date('Y-m-d H:i:s');
+    }
+  }
+}
 
 /**
  * Implements hook_civicrm_preProcess().
