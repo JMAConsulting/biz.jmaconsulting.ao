@@ -235,9 +235,10 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   }
   if ($objectName == "Address" && $op != "delete") {
     $objectRef->find(TRUE);
-    if (empty($objectRef->contact_id) || empty($objectRef->is_primary) || empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
+    if (empty($objectRef->contact_id) || empty($objectRef->geo_code_1) || empty($objectRef->geo_code_2)) {
       return;
     }
+
     $entityID = CRM_Core_DAO::singlevalueQuery("SELECT id FROM civicrm_contact WHERE contact_sub_type LIKE '%service_provider%' AND id = " . $objectRef->contact_id);
 
     if ($entityID) {
@@ -251,14 +252,31 @@ function _entitySave($address, $entityID, $entity) {
   $key = ($entity == 'Contact') ? 'field_mapped_location_1' : 'field_mapped_location';
   $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entity))->load($entityID);
   $params = [
-    'lat' => $address->geo_code_1,
-    'lng'=> $address->geo_code_2,
-    'lat_sin' => sin(deg2rad($address->geo_code_1)),
-    'lat_cos' => cos(deg2rad($address->geo_code_1)),
-    'lng_rad' => deg2rad($address->geo_code_2),
+    [
+      'lat' => $address->geo_code_1,
+      'lng'=> $address->geo_code_2,
+      'lat_sin' => sin(deg2rad($address->geo_code_1)),
+      'lat_cos' => cos(deg2rad($address->geo_code_1)),
+      'lng_rad' => deg2rad($address->geo_code_2),
+    ],
   ];
   $params['data'] = $params;
-  $entity->get('field_geolocation')->setValue(array($params));
+  if ($entity == 'Contact') {
+    $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
+    while($dao->fetch()) {
+      $p = [
+        'lat' => $dao->geo_code_1,
+        'lng'=> $dao->geo_code_2,
+        'lat_sin' => sin(deg2rad($dao->geo_code_1)),
+        'lat_cos' => cos(deg2rad($dao->geo_code_1)),
+        'lng_rad' => deg2rad($dao->geo_code_2),
+      ];
+      $p['data'] = $p;
+      $params[] = $p;
+    }
+  }
+
+  $entity->get('field_geolocation')->setValue($params);
   $entity->get($key)->setValue(1);
   $entity->save();
 }
