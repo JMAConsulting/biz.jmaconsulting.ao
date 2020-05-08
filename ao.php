@@ -634,7 +634,7 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
       if (!empty($params['postal_code'])) {
         $postalCode = str_replace(' ', '', $params['postal_code']);
         $postalCode = substr($postalCode, 0, 3) . ' ' . substr($postalCode, 3);
-        if ($postalCode == $address['postal_code']) {
+        if ($postalCode == $params['postal_code']) {
           $update = FALSE;
         }
       }
