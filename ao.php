@@ -249,18 +249,8 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 
 function _entitySave($address, $entityID, $entity) {
   $entityType = SupportedEntities::getEntityType($entity);
-  $key = ($entity == 'Contact') ? 'field_mapped_location_1' : 'field_mapped_location';
   $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entity))->load($entityID);
-  $params = [
-    [
-      'lat' => $address->geo_code_1,
-      'lng'=> $address->geo_code_2,
-      'lat_sin' => sin(deg2rad($address->geo_code_1)),
-      'lat_cos' => cos(deg2rad($address->geo_code_1)),
-      'lng_rad' => deg2rad($address->geo_code_2),
-    ],
-  ];
-  $params['data'] = $params;
+
   if ($entity == 'Contact') {
     $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
     while($dao->fetch()) {
@@ -275,9 +265,21 @@ function _entitySave($address, $entityID, $entity) {
       $params[] = $p;
     }
   }
+  else {
+    $params = [
+      [
+        'lat' => $address->geo_code_1,
+        'lng'=> $address->geo_code_2,
+        'lat_sin' => sin(deg2rad($address->geo_code_1)),
+        'lat_cos' => cos(deg2rad($address->geo_code_1)),
+        'lng_rad' => deg2rad($address->geo_code_2),
+      ],
+    ];
+    $params['data'] = $params;
+  }
 
   $entity->get('field_geolocation')->setValue($params);
-  $entity->get($key)->setValue(1);
+  $entity->get('field_mapped_location')->setValue(1);
   $entity->save();
 }
 
