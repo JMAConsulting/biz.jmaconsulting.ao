@@ -44,7 +44,7 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
     if (strstr($eventType, 'SLO ')) {
       $this->assign('subset', 'Subset_3');
     }
-    elseif (strstr($eventType, 'Workshop') && $eventType != 'Workshop Community Training') {
+    elseif (strstr($eventType, 'Workshop') || strstr($eventType, 'Webinar')  && $eventType != 'Workshop Community Training') {
       $this->assign('subset', 'Subset_2');
     }
     else {
