@@ -247,11 +247,11 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
   }
 }
 
-function _entitySave($address, $entityID, $entity) {
-  $entityType = SupportedEntities::getEntityType($entity);
-  $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entity))->load($entityID);
+function _entitySave($address, $entityID, $entityType) {
+  $eT = SupportedEntities::getEntityType($entityType);
+  $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entityType))->load($entityID);
 
-  if ($entity == 'Contact') {
+  if ($entityType == 'Contact') {
     $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
     while($dao->fetch()) {
       $p = [
@@ -277,7 +277,6 @@ function _entitySave($address, $entityID, $entity) {
     ];
     $params['data'] = $params;
   }
-
   $entity->get('field_geolocation')->setValue($params);
   $entity->get('field_mapped_location')->setValue(1);
   $entity->save();
