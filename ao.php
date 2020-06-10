@@ -249,8 +249,7 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 
 function _entitySave($address, $entityID, $entityType) {
   $eT = SupportedEntities::getEntityType($entityType);
-  $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entityType))->load($entityID);
-
+  $entity = \Drupal::entityTypeManager()->getStorage($eT)->load($entityID);
   if ($entityType == 'Contact') {
     $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
     while($dao->fetch()) {
@@ -276,6 +275,14 @@ function _entitySave($address, $entityID, $entityType) {
       ],
     ];
     $params['data'] = $params;
+  }
+  if ($eT === 'civicrm_event') {
+    $fields = ['custom_830', 'custom_832'];
+    $details = civicrm_api3('Event', 'getsingle', ['id' => $entityID, 'return' => $fields]);
+    foreach ($fields as $field) {
+      $entity->get($field)->setValue($details[$field . '_id']);
+    }
+    $entity->get('custom_831')->setValue(CRM_Core_Session::getLoggedInContactID());
   }
   $entity->get('field_geolocation')->setValue($params);
   $entity->get('field_mapped_location')->setValue(1);
