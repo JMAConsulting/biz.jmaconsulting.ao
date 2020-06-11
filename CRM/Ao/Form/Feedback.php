@@ -20,6 +20,9 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
   public function preProcess() {
     $this->_eventID = CRM_Utils_Request::retrieve('eid', 'Positive', $this, TRUE);
     $userChecksum = CRM_Utils_Request::retrieve('cs', 'String', $this);
+    if (empty($userChecksum) && !empty($_GET['cs'])) {
+      $userChecksum = $_GET['cs'];
+    }
     $this->_contactID = CRM_Utils_Request::retrieve('cid', 'Positive', $this, TRUE);
 
     if ($this->_contactID && $userChecksum) {
