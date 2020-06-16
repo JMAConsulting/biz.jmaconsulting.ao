@@ -69,6 +69,12 @@ function ao_civicrm_uninstall() {
 }
 
 function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
+  // AOG-18 Apply restriction on birth date for BBFF form.
+  if ($formName == "CRM_Grant_Form_Grant_Main" && $form->_id == 5) {
+    if (!empty($fields['birth_date']) && time() < strtotime('+18 years', strtotime($fields['birth_date']))) {
+      $errors['birth_date'] = ts('Applicant should be at least 18 years old');
+   }
+  }
   if ($formName == "CRM_Activity_Form_Activity" && (in_array($form->_action, [CRM_Core_Action::ADD, CRM_Core_Action::UPDATE]))) {
     if ($form->_action == CRM_Core_Action::UPDATE) {
       $fields['activity_type_id'] = $form->_activityTypeId;
