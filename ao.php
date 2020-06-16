@@ -75,6 +75,20 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
       $errors['birth_date'] = ts('Applicant should be at least 18 years old');
    }
   }
+  if ($formName == "CRM_Grant_Form_Grant") {
+    if (!empty($fields['grant_type_id']) && $fields['grant_type_id'] == 9 && !empty($fields['contact_id'])) {
+      // Check date of birth of contact.
+      $dob = civicrm_api3('Contact', 'get', ['contact_id' => $fields['contact_id'], 'return' => ['birth_date']]);
+      if (!empty($dob['values'][$fields['contact_id']]['birth_date'])) {
+        if (time() < strtotime('+18 years', strtotime($dob['values'][$fields['contact_id']]['birth_date']))) {
+          $errors['contact_id'] = ts('Applicant should be at least 18 years old');
+        }
+      }
+      else {
+        $errors['contact_id'] = ts('Please ensure applicant selected has a valid date of birth and is at least 18 years old');
+      }
+    }
+  }
   if ($formName == "CRM_Activity_Form_Activity" && (in_array($form->_action, [CRM_Core_Action::ADD, CRM_Core_Action::UPDATE]))) {
     if ($form->_action == CRM_Core_Action::UPDATE) {
       $fields['activity_type_id'] = $form->_activityTypeId;
