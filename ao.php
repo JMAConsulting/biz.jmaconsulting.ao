@@ -475,6 +475,10 @@ function ao_civicrm_buildForm($formName, &$form) {
   if ($formName == "CRM_Event_Form_SelfSvcUpdate") {
     $form->add('select', 'action', ts('Cancel Registration?'), array(ts('-select-'), 2 => ts('Cancel')), TRUE);
   }
+  if ($formName == "CRM_Event_Form_ManageEvent_Registration") {
+    $attributes = CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event');
+    $form->add('wysiwyg', 'confirm_email_text', ts('Confirm Email Text'), $attributes['confirm_email_text'] + ['class' => 'collapsed', 'preset' => 'civievent']);
+  }
 }
 
 /**
