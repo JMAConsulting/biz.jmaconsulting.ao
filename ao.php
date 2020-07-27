@@ -320,6 +320,9 @@ function ao_civicrm_buildForm($formName, &$form) {
     $params = ['entity' => 'address'];
     $form->addField("address[1][name]", $params);
   }
+  if ($formName == 'CRM_Event_Form_ManageEvent_EventInfo') {
+    $form->add('wysiwyg', 'summary', ts('Event Summary'), CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event')['summary']);
+  }
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     CRM_Core_Resources::singleton()->addScript(
       "CRM.$(function($) {
