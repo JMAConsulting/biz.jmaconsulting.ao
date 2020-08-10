@@ -63,7 +63,7 @@ function civicrm_api3_job_UpdateGeoLocation($params) {
         $address->id = $addressID;
         $address->find(TRUE);
         if (!empty($address->geo_code_1) && !empty($address->geo_code_2)) {
-          _entitySave($address, $dao->contact_id, 'Contact');
+          _entityJobSave($address, $dao->contact_id, 'Contact');
         }
       }
     }
@@ -71,7 +71,7 @@ function civicrm_api3_job_UpdateGeoLocation($params) {
   return civicrm_api3_create_success();
 }
 
-function _entitySave($address, $entityID, $entity) {
+function _entityJobSave($address, $entityID, $entity) {
   $entityType = SupportedEntities::getEntityType($entity);
   $key = ($entity == 'Contact') ? 'field_mapped_location_1' : 'field_mapped_location';
   $entity = \Drupal::entityTypeManager()->getStorage(SupportedEntities::getEntityType($entity))->load($entityID);
