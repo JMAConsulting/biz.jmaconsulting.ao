@@ -728,7 +728,7 @@ function ao_civicrm_pre($op, $objectName, $id, &$params) {
     if (!empty($currentAddress['values'])) {
       $currentAddress = $currentAddress['values'][$currentAddress['id']];
       if ($params['street_address'] != $currentAddress['street_address'] || $params['city'] != $currentAddress['city']
-        || $params['postal_code'] != $currentAddress['postal_code'] || $params['state_province_id'] != $currentAddress['state_province_id']) {
+        || $params['postal_code'] != $currentAddress['postal_code'] || (!empty($params['state_province_id']) && $params['state_province_id'] != $currentAddress['state_province_id'])) {
         if (empty($params['skip_auto_create'])) {
           $params[ADDRESS_SOURCE] = 'Backoffice form';
         }
