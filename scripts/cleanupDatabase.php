@@ -22,11 +22,11 @@ Class CRM_Cleanup_Database {
     $domain = new CRM_Core_DAO_Domain();
     $domain->id = CRM_Core_Config::domainID();
     $domain->find(TRUE);
-    $locales = ['fr_FR'];
+    $locales = ['fr_FR', 'fr_fr'];
     $existingLocales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
     foreach ($existingLocales as $k => $locale) {
       if (in_array($locale, $locales)) {
-        unset($existingLocales[$k]);
+        unset($existingLocales[$locale]);
       }
     }
     $domain->locales = implode(CRM_Core_DAO::VALUE_SEPARATOR, $existingLocales);
@@ -43,9 +43,7 @@ Class CRM_Cleanup_Database {
       if (isset($indices[$table])) {
         foreach ($indices[$table] as $index) {
           foreach ($locales as $loc) {
-            if (CRM_Core_BAO_SchemaHandler::checkIfIndexExists($table, "{$index['name']}_{$loc}")) {
-              $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
-            }
+            $queries[] = "DROP INDEX {$index['name']}_{$loc} ON {$table}";
           }
         }
       }
@@ -54,7 +52,7 @@ Class CRM_Cleanup_Database {
       // deal with columns
       foreach ($columns[$table] as $column => $type) {
         foreach ($locales as $loc) {
-          $dropQueries[] = "ALTER TABLE {$table} DROP IF EXISTS {$column}_{$loc}";
+          $dropQueries[] = "ALTER TABLE {$table} DROP {$column}_{$loc}";
         }
       }
 
@@ -75,8 +73,7 @@ Class CRM_Cleanup_Database {
     }
   }
 
-  // now lets rebuild all triggers
-  CRM_Core_DAO::triggerRebuild();
+
 }
 
 $script = new CRM_Cleanup_Database();
