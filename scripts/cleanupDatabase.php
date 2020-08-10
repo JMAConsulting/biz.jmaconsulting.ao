@@ -22,17 +22,10 @@ Class CRM_Cleanup_Database {
     $domain = new CRM_Core_DAO_Domain();
     $domain->id = CRM_Core_Config::domainID();
     $domain->find(TRUE);
-    $locales = ['fr_FR', 'fr_fr'];
-    $existingLocales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
-    foreach ($existingLocales as $k => $locale) {
-      if (in_array($locale, $locales)) {
-        unset($existingLocales[$locale]);
-      }
-    }
-    $domain->locales = implode(CRM_Core_DAO::VALUE_SEPARATOR, $existingLocales);
-    $domain->save();
+    $locales = explode(CRM_Core_DAO::VALUE_SEPARATOR, $domain->locales);
 
     $tables = CRM_Core_I18n_SchemaStructure::tables();
+    $locales ['fr_FR', 'fr_fr'];
     $columns =& CRM_Core_I18n_SchemaStructure::columns();
     $indices =& CRM_Core_I18n_SchemaStructure::indices();
     $queries = [];
