@@ -146,6 +146,13 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
   }
 }
 
+function ao_civicrm_check(&$messages) {
+  $current_user = \Drupal::currentUser();
+  if (!empty($current_user)) {
+    $messages = [];
+  }
+}
+
 function ao_civicrm_pageRun(&$page) {
   if ($page->getVar('_name') == 'CRM_Contact_Page_DashBoard') {
     $items = CRM_Core_BAO_Dashboard::getContactDashletsForJS();
