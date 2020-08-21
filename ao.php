@@ -147,9 +147,11 @@ function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors)
 }
 
 function ao_civicrm_check(&$messages) {
-  $current_user = \Drupal::currentUser();
-  if (!empty($current_user)) {
-    $messages = [];
+  if (class_exists('Drupal')) {
+    $current_user = \Drupal::currentUser();
+    if (!empty($current_user)) {
+      $messages = [];
+    }
   }
 }
 
