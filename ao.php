@@ -173,6 +173,13 @@ function ao_civicrm_pageRun(&$page) {
     catch (API_Exception $e) {
     }
   }
+  if ($page->getVar('_name') == 'CRM_Financial_Page_BatchTransaction') {
+    CRM_Core_Resources::singleton()->addScript("
+        CRM.$(function($) {
+          $('th.crm-payment-method').text('Payment Method');
+        });
+    ");
+  }
   if ('CRM_Contribute_Page_ContributionPage' == $page->getVar('_name')) {
     Civi::resources()->addScript("
     CRM.$(function($) {
@@ -331,6 +338,13 @@ function ao_civicrm_buildForm($formName, &$form) {
   }
   if ($formName == 'CRM_Event_Form_ManageEvent_EventInfo') {
     $form->add('wysiwyg', 'summary', ts('Event Summary'), CRM_Core_DAO::getAttribute('CRM_Event_DAO_Event')['summary']);
+  }
+  if ($formName == 'CRM_Financial_Form_FinancialBatch') {
+    CRM_Core_Resources::singleton()->addScript("
+        CRM.$(function($) {
+          $('th.crm-payment-method').text('Payment Method');
+        });
+    ");
   }
   if ($formName == 'CRM_Contribute_Form_Contribution_Main') {
     CRM_Core_Resources::singleton()->addScript(
