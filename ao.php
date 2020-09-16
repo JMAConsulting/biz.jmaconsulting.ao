@@ -68,6 +68,13 @@ function ao_civicrm_uninstall() {
   _ao_civix_civicrm_uninstall();
 }
 
+function ao_civicrm_apiWrappers(&$wrappers, $apiRequest) {
+  if ($apiRequest['entity'] == 'Contact' && $apiRequest['action'] == 'get') {
+    $wrappers[] = new CRM_Contact_GetAPIWrapper();
+  }
+}
+
+
 function ao_civicrm_validateForm($formName, &$fields, &$files, &$form, &$errors) {
   // AOG-18 Apply restriction on birth date for BBFF form.
   if ($formName == "CRM_Grant_Form_Grant_Main" && $form->_id == 5) {
