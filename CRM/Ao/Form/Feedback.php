@@ -27,7 +27,7 @@ class CRM_Ao_Form_Feedback extends CRM_Core_Form {
 
     if ($this->_contactID && $userChecksum) {
       if (!CRM_Contact_BAO_Contact_Utils::validChecksum($this->_contactID, $userChecksum)) {
-        CRM_Core_Error::fatal(ts("You are not authorised to access this page."));
+        throw new CRM_Core_Exception(ts("You are not authorised to access this page."));
       }
     }
 
