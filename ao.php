@@ -279,7 +279,21 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 function _entitySave($address, $entityID, $entityType) {
   $eT = SupportedEntities::getEntityType($entityType);
   $entity = \Drupal::entityTypeManager()->getStorage($eT)->load($entityID);
+  $currentCustomValues = [];
   if ($entityType == 'Contact') {
+    $fields = [
+      'service_provider_details.Regulated_Services_Provided',
+      'service_provider_details.Service_Provided',      
+      'service_provider_details.Age_Groups_Served',
+      'service_provider_details.Language',
+      'service_provider_details.ABA_credentials_held',
+    ];
+    $contact = Civi\Api4\Contact::get(FALSE)->setCheckPermissions(FALSE)->setSelect(array_values($fields))->addWhere('id', '=', $entityID)->execute()->first();
+    foreach ($fields as $field) {
+      if (!empty($contact[$field])) {
+        $currentCustomValues[$field] = $contact[$field];
+      }
+    }
     $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
     while($dao->fetch()) {
       $p = [
@@ -316,6 +330,12 @@ function _entitySave($address, $entityID, $entityType) {
   $entity->get('field_geolocation')->setValue($params);
   $entity->get('field_mapped_location')->setValue(1);
   $entity->save();
+  if (!empty($currentCustomValues)) {
+    $contactUpdate = Civi\Api4\Contact::update(FALSE)
+      ->setCheckPermissions(FALSE)
+      ->setValues($currentCustomValues)
+      ->addWhere('id', '=', $entityID)->execute();
+  }
 }
 
 
