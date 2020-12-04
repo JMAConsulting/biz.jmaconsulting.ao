@@ -279,19 +279,31 @@ function ao_civicrm_post( $op, $objectName, $objectId, &$objectRef ) {
 function _entitySave($address, $entityID, $entityType) {
   $eT = SupportedEntities::getEntityType($entityType);
   $entity = \Drupal::entityTypeManager()->getStorage($eT)->load($entityID);
-  $currentCustomValues = [];
+  $currentCustomValues = $v3CustomValues = [];
   if ($entityType == 'Contact') {
-    $fields = [
-      'service_provider_details.Regulated_Services_Provided',
-      'service_provider_details.Service_Provided',      
-      'service_provider_details.Age_Groups_Served',
-      'service_provider_details.Language',
-      'service_provider_details.ABA_credentials_held',
-    ];
-    $contact = Civi\Api4\Contact::get(FALSE)->setCheckPermissions(FALSE)->setSelect(array_values($fields))->addWhere('id', '=', $entityID)->execute()->first();
-    foreach ($fields as $field) {
+    $fieldsv4 = $fieldsv3 = $fieldMapping = [];
+    $customFields = civicrm_api3('CustomField', 'get', [
+      'return' => ["custom_group_id.name", "name", 'html_type'],
+      'serialize' => ['IS NOT NULL' => 1],
+      'custom_group_id.extends' => ['IN' => ["Organization", "Contact"]],
+      'custom_group_id.is_multiple' => 0,
+    ]);
+    foreach ($customFields['values'] as $customField) {
+      if (strpos($customField['html_type'], 'Select') !== FALSE) {
+        $fieldsv3[] = 'custom_' . $customField['id'];
+        $fieldMapping[$customField['custom_group_id.name']  . '.' . $customField['name']] = 'custom_' . $customField['id'];
+      }
+      $fieldsv4[] = $customField['custom_group_id.name']  . '.' . $customField['name'];
+    }
+    $contact = Civi\Api4\Contact::get(FALSE)->setCheckPermissions(FALSE)->setSelect(array_values($fieldsv4))->addWhere('id', '=', $entityID)->execute()->first();
+    foreach ($fieldsv4 as $field) {
       if (!empty($contact[$field])) {
-        $currentCustomValues[$field] = $contact[$field];
+        if (array_key_exists($field, $fieldMapping)) {
+          $v3CustomValues[$fieldMapping[$field]] = $contact[$field];
+        }
+        else {
+          $currentCustomValues[$field] = $contact[$field];
+        }
       }
     }
     $dao = CRM_Core_DAO::executeQuery("SELECT id, geo_code_1, geo_code_2 FROM civicrm_address WHERE contact_id = {$entityID} AND geo_code_1 IS NOT NULL AND geo_code_2 IS NOT NULL");
@@ -335,6 +347,11 @@ function _entitySave($address, $entityID, $entityType) {
       ->setCheckPermissions(FALSE)
       ->setValues($currentCustomValues)
       ->addWhere('id', '=', $entityID)->execute();
+  }
+  if (!empty($v3CustomValues)) {
+    $v3CustomValues['id']  = $entityID;
+    $v3CustomValues['contact_type'] = 'Organization';
+    civicrm_api3('Contact', 'create', $v3CustomValues);
   }
 }
 
