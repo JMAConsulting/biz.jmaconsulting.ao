@@ -156,23 +156,6 @@ function ao_civicrm_check(&$messages) {
 }
 
 function ao_civicrm_pageRun(&$page) {
-  if ($page->getVar('_name') == 'CRM_Contact_Page_DashBoard') {
-    $items = CRM_Core_BAO_Dashboard::getContactDashletsForJS();
-    try {
-      $item = CRM_Utils_Array::value(0, civicrm_api3('Dashboard', 'get', ['url' => ['LIKE' => "%instance/47%"],  'sequential' => 1])['values']);
-      $items[1][] = array(
-        'id' => $item['id'],
-        'name' => $item['name'],
-        'title' => $item['label'],
-        'url' => CRM_Core_BAO_Dashboard::parseUrl($item['url']),
-        'cacheMinutes' => $item['cache_minutes'],
-        'fullscreenUrl' => CRM_Core_BAO_Dashboard::parseUrl($item['fullscreen_url']),
-      );
-      $page->assign('contactDashlets', $items);
-    }
-    catch (API_Exception $e) {
-    }
-  }
   if ('CRM_Contribute_Page_ContributionPage' == $page->getVar('_name')) {
     Civi::resources()->addScript("
     CRM.$(function($) {
@@ -666,7 +649,8 @@ function ao_civicrm_caseTypes(&$caseTypes) {
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
 function ao_civicrm_angularModules(&$angularModules) {
-_ao_civix_civicrm_angularModules($angularModules);
+  $angularModules['crmDashboard']['settingsFactory'] = ['CRM_Ao_Utils', 'ao_dashboard_angular_settings'];
+  _ao_civix_civicrm_angularModules($angularModules);
 }
 
 /**
