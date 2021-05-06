@@ -26,3 +26,7 @@ select.crm-form-select {
 fieldset#mail, fieldset#thankyou, fieldset#confirm, fieldset#registration {
   padding-top: 55px !important;
 }
+
+.elfinder-cwd-wrapper {
+  background: white;
+}
