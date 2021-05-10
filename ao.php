@@ -270,6 +270,7 @@ function _entitySave($address, $entityID, $entityType) {
       'serialize' => ['IS NOT NULL' => 1],
       'custom_group_id.extends' => ['IN' => ["Organization", "Contact"]],
       'custom_group_id.is_multiple' => 0,
+      'options' => ['limit' => 0],
     ]);
     foreach ($customFields['values'] as $customField) {
       if (strpos($customField['html_type'], 'Select') !== FALSE) {
