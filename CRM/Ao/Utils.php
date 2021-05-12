@@ -5,7 +5,11 @@ class CRM_Ao_Utils {
   public static function ao_dashboard_angular_settings() {
     $dashlets = CRM_Core_BAO_Dashboard::getContactDashlets();
     try {
-      $item = CRM_Utils_Array::value(0, civicrm_api3('Dashboard', 'get', ['url' => ['LIKE' => "%instance/47%"],  'sequential' => 1])['values']);
+      $item = CRM_Utils_Array::value(0, civicrm_api3('Dashboard', 'get', [
+        'label' => ['LIKE' => "%My Activities%"],
+        'sequential' => 1,
+        'options' => ['limit' => 1]
+      ])['values']);
       $dashlets[] = [
         'id' => $item['id'],
         'name' => $item['name'],
@@ -20,6 +24,7 @@ class CRM_Ao_Utils {
         'is_reserved' => 0,
         'directive' => NULL,
         'dashboard_contact.id' => NULL,
+        'dashboard_contact.dashboard_id' => $item['id'],
         'dashboard_contact.contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID(),
         'dashboard_contact.column_no' => 1,
         'dashboard_contact.is_active' => 1,
