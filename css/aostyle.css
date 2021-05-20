@@ -30,3 +30,9 @@ fieldset#mail, fieldset#thankyou, fieldset#confirm, fieldset#registration {
 .elfinder-cwd-wrapper {
   background: white;
 }
+
+.status-overdue td.crm-report-civicrm_activity_activity_type_id a,
+.status-overdue td.crm-report-civicrm_activity_activity_date_time,
+.status-overdue td.crm-report-civicrm_activity_status_id {
+  color: #E43D2B !important;
+}
