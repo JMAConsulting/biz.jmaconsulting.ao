@@ -36,3 +36,7 @@ fieldset#mail, fieldset#thankyou, fieldset#confirm, fieldset#registration {
 .status-overdue td.crm-report-civicrm_activity_status_id {
   color: #E43D2B !important;
 }
+
+.ck-rounded-corners .ck.ck-balloon-panel, .ck.ck-balloon-panel.ck-rounded-corners {
+  z-index: 3000;
+}
