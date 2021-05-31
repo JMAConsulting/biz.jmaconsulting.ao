@@ -10,7 +10,12 @@ class CRM_Ao_Utils {
         'sequential' => 1,
         'options' => ['limit' => 1]
       ])['values']);
-      $dashlets[] = [
+      $dashboardContact = civicrm_api3('DashboardContact', 'get', [
+        'dashboard_id' => $item['id'],
+        'contact_id' => CRM_Core_Session::singleton()->getLoggedInContactID(),
+        'sequential' => 1,
+      ]);
+      $dashlet = [
         'id' => $item['id'],
         'name' => $item['name'],
         'label' => $item['label'],
@@ -30,6 +35,10 @@ class CRM_Ao_Utils {
         'dashboard_contact.is_active' => 1,
         'dashboard_contact.weight' => 0,
       ];
+      if (!empty($dashboardContact['values'])) {
+        $dashlet['dashboard_contact.id'] = $dashboardContact['values'][0]['id'];
+      }
+      $dashlets[] = $dashlet;
     }
     catch (API_Exception $e) {
     }
